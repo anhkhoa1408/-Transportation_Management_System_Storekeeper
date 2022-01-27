@@ -1,17 +1,14 @@
 import React, { useRef, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
-import HistoryScreen from '../../views/HistoryScreen/HistoryScreen';
-import ReportList from '../../views/ReportScreen/ReportList';
-import Account from '../../views/AuthScreen/Account';
-import HomeStackScreen from '../StackNavigator/HomeStackScreen';
-import StorageScreen from '../../views/StorageScreen/StorageScreen';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import * as Animatable from 'react-native-animatable';
 import { COLORS } from '../../styles';
 
+import HomeStackScreen from '../StackNavigator/HomeStackScreen';
+import HistoryScreen from '../../views/HistoryScreen/HistoryScreen';
 import ReportStackScreen from '../StackNavigator/ReportStackScreen';
 import SettingStackScreen from '../StackNavigator/SettingStackScreen';
 import StorageStackScreen from '../StackNavigator/StorageStackScreen';
@@ -100,6 +97,7 @@ const TabNavigatior = () => {
       barStyle={style.container}
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           ...style.container,
           display: getTabBarVisibility(route),

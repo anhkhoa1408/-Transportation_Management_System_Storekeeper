@@ -9,8 +9,19 @@ import CustomInput from '../../components/CustomInput/CustomInput';
 import PillButton from '../../components/CustomButton/PillButton';
 import { success } from '../../styles/color';
 import { COLORS } from '../../styles';
+import Select from '../../components/Select/Select';
 
 const EditPackage = ({ navigation }) => {
+  const [data, setData] = useState([
+    {
+      label: 'Dễ vỡ',
+      value: 1,
+    },
+    {
+      label: 'Thường',
+      value: 2,
+    },
+  ]);
   return (
     <SafeAreaView style={style.container}>
       <Header
@@ -35,7 +46,7 @@ const EditPackage = ({ navigation }) => {
         <TextField title="Chiều cao" keyboardType="numeric" />
         <TextField title="Cân nặng" keyboardType="numeric" />
         <TextField title="Số lượng" keyboardType="numeric" />
-        <TextField title="Loại" />
+        <Select data={data} title="Loại" />
         <CustomInput title="Ghi chú" />
         {/* <PillButton
           title="Lưu"
