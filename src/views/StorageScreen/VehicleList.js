@@ -90,7 +90,12 @@ const VehicleList = ({ navigation }) => {
 
   return (
     <SafeAreaView style={style.container}>
-      <Header headerText={'Danh sách phương tiện'} />
+      <Header
+        leftElement={
+          <Icon name="west" size={30} onPress={() => navigation.goBack()} />
+        }
+        headerText={'Danh sách phương tiện'}
+      />
 
       <View style={{ width: '100%', paddingHorizontal: 10, display: 'flex' }}>
         <CustomSearch />

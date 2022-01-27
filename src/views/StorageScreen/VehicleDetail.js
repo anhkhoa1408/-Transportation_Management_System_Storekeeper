@@ -9,8 +9,7 @@ import {
 import { Text, Icon, Divider, ListItem, CheckBox } from 'react-native-elements';
 import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
-import { primary, success } from '../../styles/color';
-import { FONTS } from '../../styles';
+import { FONTS, COLORS } from '../../styles';
 import { InfoField } from '../../components/InfoField';
 import ButtonSwitch from '../../components/ButtonSwitch';
 
@@ -60,7 +59,7 @@ const VehicleDetail = ({ navigation }) => {
           <Icon
             name="check"
             size={30}
-            color={primary}
+            color={COLORS.primary}
             onPress={() => navigation.goBack()}
           />
         }
@@ -87,7 +86,7 @@ const VehicleDetail = ({ navigation }) => {
           </View>
           <View
             style={{
-              backgroundColor: primary,
+              backgroundColor: COLORS.primary,
               padding: 10,
               borderRadius: 20,
             }}>
@@ -111,7 +110,7 @@ const VehicleDetail = ({ navigation }) => {
             content="5000 kg"
           />
         </View>
-        <Divider color={primary} width={2} />
+        <Divider color={COLORS.primary} width={2} />
         <ListItem.Accordion
           bottomDivider
           containerStyle={{
@@ -157,7 +156,7 @@ const VehicleDetail = ({ navigation }) => {
                       }}
                       name="archive"
                       type="font-awesome"
-                      color={primary}
+                      color={COLORS.primary}
                     />
                     <View
                       style={{
@@ -210,7 +209,7 @@ const VehicleDetail = ({ navigation }) => {
           </ListItem.Content>
         </ListItem>
 
-        <Divider color={primary} width={2} />
+        <Divider color={COLORS.primary} width={2} />
       </View>
     </SafeAreaView>
   );

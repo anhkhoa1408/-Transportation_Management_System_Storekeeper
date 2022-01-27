@@ -6,6 +6,7 @@ import NotificationScreen from '../../views/NotificationScreen/NotificationScree
 import VehicleList from '../../views/StorageScreen/VehicleList';
 import VehicleDetail from '../../views/StorageScreen/VehicleDetail';
 import BarcodeDetail from '../../views/BarcodeScreen/BarcodeDetail';
+import EditPackage from '../../views/StorageScreen/EditPackage';
 
 const HomeStack = createStackNavigator();
 
@@ -22,6 +23,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="VehicleList" component={VehicleList} />
       <HomeStack.Screen name="VehicleDetail" component={VehicleDetail} />
       <HomeStack.Screen name="BarcodeDetail" component={BarcodeDetail} />
+      <HomeStack.Screen name="EditPackage" component={EditPackage} />
     </HomeStack.Navigator>
   );
 };

@@ -8,6 +8,7 @@ import { DatePicker } from '../../components/DatePicker';
 import CustomInput from '../../components/CustomInput/CustomInput';
 import PillButton from '../../components/CustomButton/PillButton';
 import { success } from '../../styles/color';
+import { COLORS } from '../../styles';
 
 const EditPackage = ({ navigation }) => {
   return (
@@ -17,6 +18,14 @@ const EditPackage = ({ navigation }) => {
           <Icon name="west" size={30} onPress={() => navigation.goBack()} />
         }
         headerText={'Chi tiết kiện hàng'}
+        rightElement={
+          <Icon
+            name="check"
+            size={30}
+            color={COLORS.primary}
+            onPress={() => navigation.goBack()}
+          />
+        }
       />
       <ScrollView contentContainerStyle={style.form}>
         <TextField title="Tên kiện hàng (tuỳ chọn)" />
@@ -28,12 +37,12 @@ const EditPackage = ({ navigation }) => {
         <TextField title="Số lượng" keyboardType="numeric" />
         <TextField title="Loại" />
         <CustomInput title="Ghi chú" />
-        <PillButton
+        {/* <PillButton
           title="Lưu"
           buttonStyle={{
             backgroundColor: success,
           }}
-        />
+        /> */}
       </ScrollView>
     </SafeAreaView>
   );
