@@ -6,14 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Text,
-  Icon,
-  Divider,
-  ListItem,
-  CheckBox,
-  Switch,
-} from 'react-native-elements';
+import { Text, Icon, Divider, ListItem, CheckBox } from 'react-native-elements';
 import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
 import { primary, success } from '../../styles/color';
@@ -22,7 +15,7 @@ import { InfoField } from '../../components/InfoField';
 import ButtonSwitch from '../../components/ButtonSwitch';
 
 const VehicleDetail = ({ navigation }) => {
-  const [expand, setExpand] = useState(false);
+  const [expand, setExpand] = useState(true);
   const [checked, setChecked] = useState(false);
   const [data, setData] = useState([
     {
@@ -140,6 +133,7 @@ const VehicleDetail = ({ navigation }) => {
             {data.map((item, index) => (
               <TouchableOpacity
                 activeOpacity={0.9}
+                key={item.id}
                 onPress={() => navigation.navigate('EditPackage')}>
                 <View
                   key={item.id}

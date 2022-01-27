@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   FlatList,
   SafeAreaView,
   TouchableWithoutFeedback,
@@ -11,7 +10,6 @@ import { Text, ListItem, Icon, CheckBox } from 'react-native-elements';
 import CustomSearch from '../../components/CustomSearch/CustomSearch';
 import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
-import { primary, danger } from '../../styles/color';
 import { COLORS } from '../../styles';
 import * as Animatable from 'react-native-animatable';
 

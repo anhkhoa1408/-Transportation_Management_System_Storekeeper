@@ -63,7 +63,7 @@ function HomeScreen({ navigation, ...props }) {
           rightElement={
             <HeaderAvatar
               url={user.avatar}
-              onPressAction={() => navigation.navigate('Account')}
+              onPressAction={() => navigation.navigate('EditProfile')}
             />
           }
         />
