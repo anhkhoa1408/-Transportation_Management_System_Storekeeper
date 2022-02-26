@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import {
   Text,
@@ -12,30 +12,19 @@ import { container, header } from '../../styles/layoutStyle';
 import Loading from '../../components/Loading';
 import Header from '../../components/Header';
 import { danger, primary, success, warning } from '../../styles/color';
+import storageApi from '../../api/storageApi';
+import moment from 'moment';
 
 export default function HistoryScreen({ navigation }) {
-  const [data, setData] = useState([
-    {
-      carId: '#afoqijfoasdada'.toLocaleUpperCase(),
-      dateTime: '12/20/2019 3:36 PM',
-    },
-    {
-      carId: '#bmiweopkrejgoi'.toLocaleUpperCase(),
-      dateTime: '12/20/2019 3:36 PM',
-    },
-    {
-      carId: '#opkopjqwoiasdd'.toLocaleUpperCase(),
-      dateTime: '12/20/2019 3:36 PM',
-    },
-    {
-      carId: '#fmppoekpokrope'.toLocaleUpperCase(),
-      dateTime: '12/20/2019 3:36 PM',
-    },
-  ]);
+  const [pageImport, setPageImport] = useState(0);
+  const [pageExport, setPageExport] = useState(0);
+  const [imports, setImports] = useState([]);
+  const [exports, setExports] = useState([]);
   const [index, setIndex] = useState(0);
 
   const renderItem = ({ item, index }) => (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => navigation.navigate('HistoryDetail', { item })}>
       <ListItem
         containerStyle={{
           padding: 20,
@@ -65,20 +54,25 @@ export default function HistoryScreen({ navigation }) {
           />
         </View>
         <ListItem.Content>
-          <ListItem.Title>{item.carId}</ListItem.Title>
-          <ListItem.Subtitle>{item.dateTime}</ListItem.Subtitle>
+          <ListItem.Title>ID: {item.id}</ListItem.Title>
+          <ListItem.Subtitle>
+            {moment(item.createdAt).format('DD-MM-YYYY HH:mm:ss')}
+          </ListItem.Subtitle>
         </ListItem.Content>
-        <Icon
-          size={25}
-          name="file-download"
-          iconStyle={{
-            color: '#AAA',
-          }}
-          onPress={() => console.log(1)}
-        />
+        <ListItem.Chevron size={20} />
       </ListItem>
     </TouchableOpacity>
   );
+
+  useEffect(() => {
+    Promise.all([
+      storageApi.importList({ page: pageImport }),
+      storageApi.exportList({ page: pageExport }),
+    ]).then(result => {
+      setImports(result[0]);
+      setExports(result[1]);
+    });
+  }, [pageImport, pageExport]);
 
   return (
     <View style={styles.container}>
@@ -114,9 +108,9 @@ export default function HistoryScreen({ navigation }) {
       <TabView value={index} onChange={setIndex} animationType="spring">
         <TabView.Item style={{ width: '100%' }}>
           <FlatList
-            data={data}
+            data={imports}
             renderItem={renderItem}
-            keyExtractor={item => `${item.carId}`}
+            keyExtractor={item => `${item.id}`}
             ListEmptyComponent={
               <View
                 style={{
@@ -129,14 +123,24 @@ export default function HistoryScreen({ navigation }) {
                 }}>
                 <Text>Chưa có lịch sử nhập xuất</Text>
               </View>
+            }
+            ListFooterComponent={
+              imports.length > 5 && (
+                <View style={{ padding: 20 }}>
+                  <PillButton
+                    onPress={() => setPageImport(pageImport + 1)}
+                    title="Xem thêm"
+                  />
+                </View>
+              )
             }
           />
         </TabView.Item>
         <TabView.Item style={{ width: '100%' }}>
           <FlatList
-            data={data}
+            data={exports}
             renderItem={renderItem}
-            keyExtractor={item => `${item.carId}`}
+            keyExtractor={item => `${item.id}`}
             ListEmptyComponent={
               <View
                 style={{
@@ -150,11 +154,21 @@ export default function HistoryScreen({ navigation }) {
                 <Text>Chưa có lịch sử nhập xuất</Text>
               </View>
             }
+            ListFooterComponent={
+              exports.length > 5 && (
+                <View style={{ padding: 20 }}>
+                  <PillButton
+                    onPress={() => setPageImport(pageExport + 1)}
+                    title="Xem thêm"
+                  />
+                </View>
+              )
+            }
           />
         </TabView.Item>
       </TabView>
 
-      {data.length == 0 && <Loading />}
+      {/* {exports.length == 0 && <Loading />} */}
     </View>
   );
 }

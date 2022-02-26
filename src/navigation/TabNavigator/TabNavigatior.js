@@ -8,7 +8,7 @@ import * as Animatable from 'react-native-animatable';
 import { COLORS } from '../../styles';
 
 import HomeStackScreen from '../StackNavigator/HomeStackScreen';
-import HistoryScreen from '../../views/HistoryScreen/HistoryScreen';
+import HistoryStackScreen from '../StackNavigator/HistoryStackScreen';
 import ReportStackScreen from '../StackNavigator/ReportStackScreen';
 import SettingStackScreen from '../StackNavigator/SettingStackScreen';
 import StorageStackScreen from '../StackNavigator/StorageStackScreen';
@@ -142,7 +142,7 @@ const TabNavigatior = () => {
         tabBarActiveTintColor: '#7FC3DC',
         tabBarInactiveTintColor: '#BBB',
       })}>
-      <Tab.Screen name="History" component={HistoryScreen} />
+      <Tab.Screen name="History" component={HistoryStackScreen} />
       <Tab.Screen name="Report" component={ReportStackScreen} />
       <Tab.Screen name="Home" component={HomeStackScreen} />
       <Tab.Screen name="Store" component={StorageStackScreen} />
@@ -152,7 +152,7 @@ const TabNavigatior = () => {
 };
 
 const visibleTabBarScreen = [
-  'History',
+  'HistoryScreen',
   'ReportScreen',
   'HomeScreen',
   'StorageScreen',
