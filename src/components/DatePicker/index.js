@@ -6,7 +6,9 @@ import { shadowCard, shadowInput } from '../../styles/layoutStyle';
 import { TouchableOpacity } from 'react-native';
 
 export const DatePicker = props => {
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(
+    (props.date && new Date(props.date)) || new Date(),
+  );
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
@@ -14,6 +16,7 @@ export const DatePicker = props => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
+    // 'onSetDate' in props && props.onSetDate(currentDate);
   };
 
   const showMode = currentMode => {
@@ -55,10 +58,9 @@ export const DatePicker = props => {
           }}
           TouchableComponent={TouchableOpacity}
         />
-        {show && (
+        {show && !props.disabled && (
           <DateTimePicker
             testID="dateTimePicker"
-            dateFormat="shortdate"
             value={date}
             mode={mode}
             is24Hour={true}

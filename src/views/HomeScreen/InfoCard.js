@@ -73,7 +73,7 @@ const InfoCard = ({ item, navigation }) => {
 
 const styles = StyleSheet.create({
   listItem: {
-    width: 200,
+    width: 185,
     height: 120,
     display: 'flex',
     alignItems: 'center',

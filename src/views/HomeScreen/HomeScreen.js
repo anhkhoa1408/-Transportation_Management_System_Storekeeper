@@ -10,7 +10,7 @@ import InfoCard from './InfoCard';
 import { connect } from 'react-redux';
 import homeAPI from '../../api/homeAPI';
 // Import Asset
-import styles, { STYLES, COLORS } from '../../styles';
+import styles, { STYLES, COLORS, FONTS } from '../../styles';
 import banner from './../../assets/images/delivery.jpg';
 import { container, shadowCard } from '../../styles/layoutStyle';
 import { danger, primary, success } from '../../styles/color';
@@ -41,10 +41,19 @@ function HomeScreen({ navigation, ...props }) {
       'https://res.cloudinary.com/dfnoohdaw/image/upload/v1638692549/avatar_default_de42ce8b3d.png',
   });
 
+  const [status, setStatus] = useState({
+    storage_status: '',
+    total_packages: '',
+  });
+
   const renderItem = ({ item }) => (
     <InfoCard item={item} navigation={navigation} />
   );
   const keyExtractor = (item, index) => index.toString();
+
+  useEffect(() => {
+    homeAPI.getStorekeeperStatus().then(response => setStatus(response));
+  }, []);
 
   return (
     <>
@@ -103,8 +112,17 @@ function HomeScreen({ navigation, ...props }) {
                 flexDirection: 'column',
                 alignItems: 'center',
               }}>
-              <Icon name="store" color={danger} size={22} reverse />
-              <Text h4>Đầy</Text>
+              <Icon
+                name="store"
+                color={
+                  status.storage_status === 'Đang hoạt động'
+                    ? COLORS.primary
+                    : COLORS.warning
+                }
+                size={22}
+                reverse
+              />
+              <Text style={FONTS.BigBold}>{status.storage_status}</Text>
             </View>
           </Card>
           <Card containerStyle={homeStyle.cardContainer}>
@@ -116,7 +134,9 @@ function HomeScreen({ navigation, ...props }) {
                 alignItems: 'center',
               }}>
               <Icon name="inventory" color={success} size={22} reverse />
-              <Text h4>1000</Text>
+              <Text style={[FONTS.BigBold, { fontSize: 20 }]}>
+                {status.total_packages}
+              </Text>
             </View>
           </Card>
         </View>
@@ -142,6 +162,7 @@ const homeStyle = StyleSheet.create({
     flex: 1,
     borderRadius: 20,
     marginTop: 0,
+    flexDirection: 'column',
     ...shadowCard,
   },
 });
