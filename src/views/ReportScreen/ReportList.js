@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,26 +13,11 @@ import Header from '../../components/Header';
 import { primary, danger } from '../../styles/color';
 import PillButton from '../../components/CustomButton/PillButton';
 import { COLORS } from '../../styles';
+import storageApi from '../../api/storageApi';
 
 const ReportList = ({ navigation }) => {
-  const [data, setData] = useState([
-    {
-      id: '#afoqijfoasdada'.toLocaleUpperCase(),
-      dateTime: '12/20/2019 3:36 PM',
-    },
-    {
-      id: '#bmiweopkrejgoi'.toLocaleUpperCase(),
-      dateTime: '12/20/2019 3:36 PM',
-    },
-    {
-      id: '#opkopjqwoiasdd'.toLocaleUpperCase(),
-      dateTime: '12/20/2019 3:36 PM',
-    },
-    {
-      id: '#fmppoekpokrope'.toLocaleUpperCase(),
-      dateTime: '12/20/2019 3:36 PM',
-    },
-  ]);
+  const [page, setPage] = useState(0);
+  const [data, setData] = useState([]);
 
   const [check, setCheck] = useState(
     Array.from({ length: data.length }, (_, index) => false),
@@ -45,11 +30,12 @@ const ReportList = ({ navigation }) => {
 
   const renderItem = ({ item, index }) => (
     <TouchableOpacity
+      key={item.id}
       onLongPress={() => handleCheck(index)}
       onPress={() =>
         check.some(item => item === true)
           ? handleCheck(index)
-          : navigation.navigate('EditReport')
+          : navigation.navigate('EditReport', item)
       }>
       <ListItem containerStyle={style.reportItem}>
         <View
@@ -73,7 +59,7 @@ const ReportList = ({ navigation }) => {
         </View>
         <ListItem.Content>
           <ListItem.Title>{item.id}</ListItem.Title>
-          <ListItem.Subtitle>{item.dateTime}</ListItem.Subtitle>
+          <ListItem.Subtitle>{item.updatedAt}</ListItem.Subtitle>
         </ListItem.Content>
         {check.some(item => item === true) ? (
           <ListItem.CheckBox
@@ -88,6 +74,19 @@ const ReportList = ({ navigation }) => {
       </ListItem>
     </TouchableOpacity>
   );
+
+  useEffect(() => {
+    // const unsubscribe = navigation.addListener('focus', () => {
+    //   storageApi.reportList({ page: page }).then(response => {
+    //     setData([...data, ...response]);
+    //   });
+    // });
+    storageApi.reportList({ page: page }).then(response => {
+      setData([...data, ...response]);
+    });
+
+    // return unsubscribe;
+  }, [page]);
 
   return (
     <SafeAreaView style={style.container}>
@@ -149,19 +148,30 @@ const ReportList = ({ navigation }) => {
             <Text>Chưa có lịch sử nhập xuất</Text>
           </View>
         }
+        ListFooterComponent={
+          data.length > 5 && (
+            <View style={{ padding: 20 }}>
+              <PillButton onPress={() => setPage(page + 1)} title="Xem thêm" />
+            </View>
+          )
+        }
       />
       {check.some(item => item === true) && (
-        <PillButton
-          title="In báo cáo"
-          buttonStyle={{ backgroundColor: primary, paddingHorizontal: 50 }}
-        />
+        <View style={{ padding: 20, paddingBottom: 30 }}>
+          <PillButton
+            title="In báo cáo"
+            buttonStyle={{
+              backgroundColor: primary,
+            }}
+          />
+        </View>
       )}
     </SafeAreaView>
   );
 };
 
 const style = StyleSheet.create({
-  container: { ...container },
+  container: { ...container, alignItems: 'stretch' },
   reportItem: {
     padding: 20,
     marginHorizontal: 20,
