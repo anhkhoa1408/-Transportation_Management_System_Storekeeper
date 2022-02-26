@@ -6,6 +6,10 @@ class HomeAPI {
     const url = MAIN_URL.concat('/driver/status');
     return axiosClient.get(url);
   };
+  getStorekeeperStatus = () => {
+    const url = MAIN_URL.concat('/storekeeper/status');
+    return axiosClient.get(url);
+  };
 }
 const homeAPI = new HomeAPI();
 export default homeAPI;

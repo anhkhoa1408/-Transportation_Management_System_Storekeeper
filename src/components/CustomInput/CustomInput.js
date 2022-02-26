@@ -15,7 +15,13 @@ const CustomInput = props => {
           borderRadius: 30,
         }}
         containerStyle={style.container}>
-        <TextInput maxLength={400} numberOfLines={5} {...props} />
+        <TextInput
+          maxLength={400}
+          numberOfLines={5}
+          value={props.value}
+          onChangeText={props.onChangeText}
+          {...props}
+        />
       </Card>
     </View>
   );
