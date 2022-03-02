@@ -6,10 +6,10 @@ import Header from '../../components/Header';
 import TextField from '../../components/TextField';
 import { DatePicker } from '../../components/DatePicker';
 import { COLORS } from '../../styles/index';
+import ModalMess from './../../components/ModalMess';
 
 const HistoryDetail = ({ navigation, route }) => {
   const { item } = route?.params;
-  console.log(item.package);
 
   return (
     <SafeAreaView style={style.container}>
@@ -20,21 +20,30 @@ const HistoryDetail = ({ navigation, route }) => {
         headerText={'Chi tiết'}
       />
       <ScrollView contentContainerStyle={style.form}>
-        <TextField editable={false} title="Mã nhập xuất" value={item.code} />
         <TextField
+          disabled
+          editable={false}
+          title="Mã nhập xuất"
+          value={item.code}
+        />
+        <TextField
+          disabled
           editable={false}
           title="Người thực hiện"
           value={item.store_manager.name}
         />
         <TextField
+          disabled
           editable={false}
           keyboardType="numeric"
           title="Số lượng nhập xuất"
           keyboardType="numeric"
+          afterText="kiện"
           value={item.quantity.toString()}
         />
         <DatePicker disabled title="Ngày thực hiện" date={item.createdAt} />
         <TextField
+          disabled
           editable={false}
           keyboardType="numeric"
           title="Mã kiện hàng"
@@ -42,6 +51,7 @@ const HistoryDetail = ({ navigation, route }) => {
           value={item.package.id}
         />
         <TextField
+          disabled
           editable={false}
           keyboardType="numeric"
           title="Tên kiện hàng"
@@ -49,9 +59,11 @@ const HistoryDetail = ({ navigation, route }) => {
           value={item.package.name}
         />
         <TextField
+          disabled
           editable={false}
           keyboardType="numeric"
           title="Số lượng còn lại"
+          afterText="kiện"
           keyboardType="numeric"
           value={(item.package.quantity - item.quantity).toString()}
         />

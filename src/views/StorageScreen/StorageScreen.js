@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,40 +6,22 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { Text, ListItem, Icon, CheckBox } from 'react-native-elements';
+import { Text, ListItem, Icon } from 'react-native-elements';
 import CustomSearch from '../../components/CustomSearch/CustomSearch';
 import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
 import { COLORS } from '../../styles';
 import * as Animatable from 'react-native-animatable';
+import PillButton from './../../components/CustomButton/PillButton';
+import packageApi from '../../api/packageApi';
 
 const StorageScreen = ({ navigation }) => {
-  const [data, setData] = useState([
-    {
-      id: '#afoqijfoasdada'.toLocaleUpperCase(),
-      barcode: '012928399203',
-      position: 'C4',
-    },
-    {
-      id: '#bmiweopkrejgoi'.toLocaleUpperCase(),
-      barcode: '012928399203',
-      position: 'C4',
-    },
-    {
-      id: '#opkopjqwoiasdd'.toLocaleUpperCase(),
-      barcode: '012928399203',
-      position: 'C4',
-    },
-    {
-      id: '#fmppoekpokrope'.toLocaleUpperCase(),
-      barcode: '012928399203',
-      position: 'C4',
-    },
-  ]);
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(0);
 
   const ref = useRef([]);
 
-  const handlePress = async index => {
+  const handlePress = async (index, item) => {
     await ref[index].animate({
       0: {
         scale: 1,
@@ -51,7 +33,7 @@ const StorageScreen = ({ navigation }) => {
         scale: 1,
       },
     });
-    navigation.navigate('EditPackage');
+    navigation.navigate('EditPackage', { item });
   };
 
   const renderItem = ({ item, index }) => (
@@ -59,7 +41,15 @@ const StorageScreen = ({ navigation }) => {
       ref={ele => (ref[index] = ele)}
       duration={500}
       easing="ease">
-      <TouchableWithoutFeedback onPress={() => handlePress(index)}>
+      <TouchableWithoutFeedback
+        onPress={() =>
+          handlePress(index, {
+            ...item.package,
+            importedQuantity: item.quantity,
+            importedId: item.id,
+            code: item.code,
+          })
+        }>
         <ListItem containerStyle={style.storeItem}>
           <View
             style={{
@@ -82,15 +72,30 @@ const StorageScreen = ({ navigation }) => {
             />
           </View>
           <ListItem.Content>
-            <ListItem.Title>{item.id}</ListItem.Title>
-            <ListItem.Subtitle>Barcode: {item.barcode}</ListItem.Subtitle>
-            <ListItem.Subtitle>Vị tri: Khu {item.position}</ListItem.Subtitle>
+            <ListItem.Title>{item.package.id}</ListItem.Title>
+            <ListItem.Subtitle>Barcode: {item.code}</ListItem.Subtitle>
+            <ListItem.Subtitle>
+              Vị tri: Khu {item.package.position}
+            </ListItem.Subtitle>
           </ListItem.Content>
-          <ListItem.Chevron size={30} />
+          <ListItem.Chevron size={20} />
         </ListItem>
       </TouchableWithoutFeedback>
     </Animatable.View>
   );
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      packageApi
+        .getImportedPackage({ page: page })
+        .then(response => {
+          setData([...data, ...response]);
+        })
+        .catch(error => console.log(error));
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <SafeAreaView style={style.container}>
@@ -119,6 +124,16 @@ const StorageScreen = ({ navigation }) => {
             }}>
             <Text>Chưa có lịch sử nhập xuất</Text>
           </View>
+        }
+        ListFooterComponent={
+          data.length > 5 && (
+            <View style={{ padding: 20 }}>
+              <PillButton
+                // onPress={() => setPageImport(pageExport + 1)}
+                title="Xem thêm"
+              />
+            </View>
+          )
         }
       />
     </SafeAreaView>

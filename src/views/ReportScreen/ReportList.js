@@ -14,6 +14,7 @@ import { primary, danger } from '../../styles/color';
 import PillButton from '../../components/CustomButton/PillButton';
 import { COLORS } from '../../styles';
 import storageApi from '../../api/storageApi';
+import moment from 'moment';
 
 const ReportList = ({ navigation }) => {
   const [page, setPage] = useState(0);
@@ -30,7 +31,7 @@ const ReportList = ({ navigation }) => {
 
   const renderItem = ({ item, index }) => (
     <TouchableOpacity
-      key={item.id}
+      key={item.id + index}
       onLongPress={() => handleCheck(index)}
       onPress={() =>
         check.some(item => item === true)
@@ -58,8 +59,10 @@ const ReportList = ({ navigation }) => {
           />
         </View>
         <ListItem.Content>
-          <ListItem.Title>{item.id}</ListItem.Title>
-          <ListItem.Subtitle>{item.updatedAt}</ListItem.Subtitle>
+          <ListItem.Title>ID: {item.id}</ListItem.Title>
+          <ListItem.Subtitle>
+            Cập nhật: {moment(item.updatedAt).format('DD-MM-YYYY HH:mm:ss')}
+          </ListItem.Subtitle>
         </ListItem.Content>
         {check.some(item => item === true) ? (
           <ListItem.CheckBox
@@ -69,23 +72,20 @@ const ReportList = ({ navigation }) => {
             checkedColor={primary}
           />
         ) : (
-          <ListItem.Chevron size={30} />
+          <ListItem.Chevron size={20} />
         )}
       </ListItem>
     </TouchableOpacity>
   );
 
   useEffect(() => {
-    // const unsubscribe = navigation.addListener('focus', () => {
-    //   storageApi.reportList({ page: page }).then(response => {
-    //     setData([...data, ...response]);
-    //   });
-    // });
-    storageApi.reportList({ page: page }).then(response => {
-      setData([...data, ...response]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      storageApi.reportList({ page: page }).then(response => {
+        setData([...data, ...response]);
+      });
     });
 
-    // return unsubscribe;
+    return unsubscribe;
   }, [page]);
 
   return (

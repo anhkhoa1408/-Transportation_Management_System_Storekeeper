@@ -12,6 +12,7 @@ import Header from '../../components/Header';
 import { FONTS, COLORS } from '../../styles';
 import { InfoField } from '../../components/InfoField';
 import ButtonSwitch from '../../components/ButtonSwitch';
+import BarcodeScanner from 'react-native-scan-barcode';
 
 const VehicleDetail = ({ navigation }) => {
   const [expand, setExpand] = useState(true);
@@ -22,32 +23,8 @@ const VehicleDetail = ({ navigation }) => {
       quantity: 10,
       current_address: 'kho Hà Nội',
     },
-    {
-      id: '#FOIJOJOF121',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-    {
-      id: '#FOIJOJOF12f',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-    {
-      id: '#FOIJOJOF12zxz',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-    {
-      id: '#FOIJOJOF12aa',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-    {
-      id: '#FOIJOJOF12qqe',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
   ]);
+
   return (
     <SafeAreaView style={style.container}>
       <Header
@@ -94,7 +71,7 @@ const VehicleDetail = ({ navigation }) => {
               name="camera"
               type="font-awesome"
               color="#FFF"
-              onPress={() => navigation.navigate('BarcodeDetail')}
+              onPress={() => navigation.navigate('BarcodeScan')}
             />
           </View>
         </View>

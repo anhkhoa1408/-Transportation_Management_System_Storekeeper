@@ -65,13 +65,19 @@ export default function HistoryScreen({ navigation }) {
   );
 
   useEffect(() => {
-    Promise.all([
-      storageApi.importList({ page: pageImport }),
-      storageApi.exportList({ page: pageExport }),
-    ]).then(result => {
-      setImports(result[0]);
-      setExports(result[1]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      Promise.all([
+        storageApi.importList({ page: pageImport }),
+        storageApi.exportList({ page: pageExport }),
+      ])
+        .then(result => {
+          setImports(result[0]);
+          setExports(result[1]);
+        })
+        .catch(err => console.log(err));
     });
+
+    return unsubscribe;
   }, [pageImport, pageExport]);
 
   return (
