@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  KeyboardAvoidingView,
+} from 'react-native';
 import { COLORS } from '../../styles';
 import authApi from '../../api/authApi';
 import { useDispatch } from 'react-redux';
@@ -13,7 +20,7 @@ import { danger, success } from '../../styles/color';
 import { Avatar, Icon } from 'react-native-elements';
 import Header from '../../components/Header';
 import TextField from '../../components/TextField';
-import PillButton from '../../components/CustomButton/PillButton';
+import PrimaryButton from '../../components/CustomButton/PrimaryButton';
 import Loading from '../../components/Loading';
 
 const ChangePass = ({ navigation }) => {
@@ -108,64 +115,76 @@ const ChangePass = ({ navigation }) => {
         headerText="Đổi mật khẩu"
       />
 
-      <ScrollView contentContainerStyle={{ padding: 25 }}>
-        <Text
-          style={{
-            textAlign: 'center',
-            marginBottom: 25,
-          }}>
-          Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm chữ in hoa, số và khác
-          với mật khẩu hiện tại
-        </Text>
-
-        <TextField
-          title="Mật khẩu hiện tại"
-          style={styles.fsize}
-          value={formik.values.currPass}
-          secureTextEntry
-          onChangeText={text => formik.setFieldValue('currPass', text)}
-        />
-
-        {formik.touched.currPass && formik.errors.currPass ? (
-          <Text style={{ color: danger, marginBottom: 10 }}>
-            {formik.errors.currPass}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior="padding"
+        keyboardVerticalOffset={10}>
+        <ScrollView contentContainerStyle={{ padding: 25 }}>
+          <Text
+            style={{
+              textAlign: 'center',
+              marginBottom: 25,
+            }}>
+            Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm chữ in hoa, số và khác
+            với mật khẩu hiện tại
           </Text>
-        ) : null}
 
-        <TextField
-          title="Mật khẩu mới"
-          style={styles.fsize}
-          value={formik.values.password}
-          secureTextEntry
-          onChangeText={text => formik.setFieldValue('password', text)}
-        />
+          <TextField
+            title="Mật khẩu hiện tại"
+            style={styles.fsize}
+            value={formik.values.currPass}
+            secureTextEntry
+            onChangeText={text => formik.setFieldValue('currPass', text)}
+          />
 
-        {formik.touched.password && formik.errors.password ? (
-          <Text style={{ color: danger, marginBottom: 10 }}>
-            {formik.errors.password}
-          </Text>
-        ) : null}
+          {formik.touched.currPass && formik.errors.currPass ? (
+            <Text
+              style={{ color: danger, fontWeight: 'bold', marginBottom: 15 }}>
+              {formik.errors.currPass}
+            </Text>
+          ) : null}
 
-        <TextField
-          title="Xác nhận mật khẩu"
-          style={styles.fsize}
-          value={formik.values.confirmPassword}
-          secureTextEntry
-          onChangeText={text => formik.setFieldValue('confirmPassword', text)}
-        />
+          <TextField
+            title="Mật khẩu mới"
+            style={styles.fsize}
+            value={formik.values.password}
+            secureTextEntry
+            onChangeText={text => formik.setFieldValue('password', text)}
+          />
 
-        {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
-          <Text style={{ color: danger, marginBottom: 10 }}>
-            {formik.errors.confirmPassword}
-          </Text>
-        ) : null}
+          {formik.touched.password && formik.errors.password ? (
+            <Text
+              style={{ color: danger, fontWeight: 'bold', marginBottom: 15 }}>
+              {formik.errors.password}
+            </Text>
+          ) : null}
 
-        <PillButton
+          <TextField
+            title="Xác nhận mật khẩu"
+            style={styles.fsize}
+            value={formik.values.confirmPassword}
+            secureTextEntry
+            onChangeText={text => formik.setFieldValue('confirmPassword', text)}
+          />
+
+          {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+            <Text
+              style={{ color: danger, fontWeight: 'bold', marginBottom: 15 }}>
+              {formik.errors.confirmPassword}
+            </Text>
+          ) : null}
+        </ScrollView>
+
+        <PrimaryButton
           title="Cập nhật"
-          buttonStyle={{ backgroundColor: success }}
           onPress={formik.submitForm}
+          backgroundColor={COLORS.success}
+          containerStyle={{
+            marginBottom: 25,
+            marginHorizontal: 25,
+          }}
         />
-      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

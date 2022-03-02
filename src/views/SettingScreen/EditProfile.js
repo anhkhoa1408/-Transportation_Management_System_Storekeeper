@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  KeyboardAvoidingView,
+} from 'react-native';
 import { COLORS } from '../../styles';
 import authApi from '../../api/authApi';
 import { useDispatch } from 'react-redux';
@@ -10,10 +17,10 @@ import * as Bonk from 'yup';
 import { saveInfo } from '../../actions/actions';
 import ModalMess from '../../components/ModalMess';
 import { danger, success } from '../../styles/color';
-import { Avatar, Icon } from 'react-native-elements';
+import { Avatar, Icon, Button } from 'react-native-elements';
 import Header from '../../components/Header';
 import TextField from '../../components/TextField';
-import PillButton from '../../components/CustomButton/PillButton';
+import PrimaryButton from '../../components/CustomButton/PrimaryButton';
 import Loading from '../../components/Loading';
 
 const EditProfile = ({ navigation }) => {
@@ -78,7 +85,7 @@ const EditProfile = ({ navigation }) => {
       .catch(err => {
         setLoading(false);
         setAlert({
-          type: 'error',
+          type: 'danger',
           message: 'Cập nhật thông tin thất bại',
         });
       });
@@ -102,66 +109,73 @@ const EditProfile = ({ navigation }) => {
         headerText="Thông tin cá nhân"
       />
 
-      <ScrollView contentContainerStyle={{ padding: 25 }}>
-        <View style={{ alignItems: 'center' }}>
-          <Avatar
-            size={150}
-            source={{
-              uri: avatar,
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior="padding"
+        keyboardVerticalOffset={10}>
+        <ScrollView contentContainerStyle={{ padding: 25 }}>
+          <View style={{ alignItems: 'center' }}>
+            <Avatar
+              size={150}
+              source={{
+                uri: avatar,
+              }}
+              rounded>
+              <Avatar.Accessory
+                underlayColor="#CCC"
+                style={{ backgroundColor: COLORS.primary }}
+                color={COLORS.white}
+                // onPress={() => console.log(1)}
+                size={35}
+              />
+            </Avatar>
+          </View>
+
+          <TextField
+            title="Tên"
+            style={styles.fsize}
+            onChangeText={text => {
+              formik.setFieldValue('name', text);
             }}
-            rounded>
-            <Avatar.Accessory
-              underlayColor="#CCC"
-              style={{ backgroundColor: COLORS.primary }}
-              color={COLORS.white}
-              // onPress={() => console.log(1)}
-              size={35}
-            />
-          </Avatar>
-        </View>
+            value={formik.values.name}
+          />
 
-        <TextField
-          title="Tên"
-          style={styles.fsize}
-          onChangeText={text => {
-            formik.setFieldValue('name', text);
-          }}
-          value={formik.values.name}
-        />
+          {formik.touched.name && formik.errors.name ? (
+            <Text style={{ color: danger }}>{formik.errors.name}</Text>
+          ) : null}
 
-        {formik.touched.name && formik.errors.name ? (
-          <Text style={{ color: danger }}>{formik.errors.name}</Text>
-        ) : null}
+          <TextField
+            title="Email"
+            style={styles.fsize}
+            value={formik.values.email}
+            onChangeText={text => formik.setFieldValue('email', text)}
+          />
 
-        <TextField
-          title="Email"
-          style={styles.fsize}
-          value={formik.values.email}
-          onChangeText={text => formik.setFieldValue('email', text)}
-        />
+          {formik.touched.email && formik.errors.email ? (
+            <Text style={{ color: danger }}>{formik.errors.email}</Text>
+          ) : null}
 
-        {formik.touched.email && formik.errors.email ? (
-          <Text style={{ color: danger }}>{formik.errors.email}</Text>
-        ) : null}
+          <TextField
+            keyboardType="numeric"
+            title="Số điện thoại"
+            style={styles.fsize}
+            value={formik.values.phone}
+            onChangeText={text => formik.setFieldValue('phone', text)}
+          />
 
-        <TextField
-          keyboardType="numeric"
-          title="Số điện thoại"
-          style={styles.fsize}
-          value={formik.values.phone}
-          onChangeText={text => formik.setFieldValue('phone', text)}
-        />
+          {formik.touched.phone && formik.errors.phone ? (
+            <Text style={{ color: danger }}>{formik.errors.phone}</Text>
+          ) : null}
+        </ScrollView>
 
-        {formik.touched.phone && formik.errors.phone ? (
-          <Text style={{ color: danger }}>{formik.errors.phone}</Text>
-        ) : null}
-
-        <PillButton
-          title="Cập nhật"
-          buttonStyle={{ backgroundColor: success }}
+        <PrimaryButton
+          title="CẬP NHẬT"
+          containerStyle={{ marginHorizontal: 25, marginBottom: 25 }}
           onPress={formik.submitForm}
+          backgroundColor={COLORS.success}
+          // neutralColor={COLORS.success}
         />
-      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
