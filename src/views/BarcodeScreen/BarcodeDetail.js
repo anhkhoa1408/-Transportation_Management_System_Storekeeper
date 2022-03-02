@@ -1,66 +1,116 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  TouchableOpacity,
+  Dimensions,
+  KeyboardAvoidingView,
 } from 'react-native';
-import {
-  Text,
-  Icon,
-  Divider,
-  ListItem,
-  CheckBox,
-  Switch,
-  Image,
-} from 'react-native-elements';
+import { Text, Icon } from 'react-native-elements';
 import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
-import { primary, success } from '../../styles/color';
-import { FONTS } from '../../styles';
+import { COLORS, FONTS } from '../../styles';
 import { InfoField } from '../../components/InfoField';
-import ButtonSwitch from '../../components/ButtonSwitch';
 import TextField from '../../components/TextField/TextField';
-import img from '../../assets/images/barcode.png';
+import Barcode from 'react-native-barcode-builder';
+import { convertPackageType } from '../../utils/convertPackageType';
+import packageApi from '../../api/packageApi';
+import storageApi from '../../api/storageApi';
+import { useFormik } from 'formik';
+import * as Bonk from 'yup';
+import ModalMess from './../../components/ModalMess';
+import Loading from './../../components/Loading';
 
-const BarcodeDetail = ({ navigation }) => {
-  const [expand, setExpand] = useState(false);
-  const [checked, setChecked] = useState(false);
-  const [data, setData] = useState([
-    {
-      id: '#FOIJOJOF123',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
+const width = Dimensions.get('screen').width;
+
+const BarcodeDetail = ({ navigation, route }) => {
+  const { barcode } = route?.params;
+  const [data, setData] = useState([]);
+  const [remainingPackage, setRemainingPackage] = useState(0);
+  const [alert, setAlert] = useState(null);
+  const [loading, setLoading] = useState(null);
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      importPackage: 0,
     },
-    {
-      id: '#FOIJOJOF121',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-    {
-      id: '#FOIJOJOF12f',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-    {
-      id: '#FOIJOJOF12zxz',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-    {
-      id: '#FOIJOJOF12aa',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-    {
-      id: '#FOIJOJOF12qqe',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-  ]);
+    validationSchema: Bonk.object({
+      importPackage: Bonk.number()
+        .required('Chưa thêm số lượng cần nhập')
+        .min(0, 'Số lượng nhập phải lớn hơn 0')
+        .test(
+          'package-test',
+          'Số lượng nhập vượt quá số kiện hàng còn lại',
+          function checkExceedQuantity(quantity) {
+            return quantity > remainingPackage ? false : true;
+          },
+        ),
+    }),
+    onSubmit: values => handleUpdateImport(values),
+  });
+
+  const handleUpdateImport = values => {
+    setLoading(<Loading />);
+    storageApi
+      .updateImportQuantityByPackage({
+        packageId: barcode,
+        quantity:
+          data.quantity -
+          remainingPackage +
+          Number.parseInt(values.importPackage),
+      })
+      .then(response => {
+        setRemainingPackage(
+          remainingPackage - Number.parseInt(values.importPackage),
+        );
+        setAlert({
+          type: 'success',
+          message: 'Nhập kiện hàng thành công',
+        });
+        setLoading(null);
+      })
+      .catch(error => {
+        setAlert({
+          type: 'danger',
+          message: 'Nhập kiện hàng thất bại',
+        });
+        setLoading(null);
+      });
+  };
+
+  useEffect(() => {
+    if (barcode) {
+      setLoading(<Loading />);
+      packageApi
+        .getScannedPackage(barcode)
+        .then(response => {
+          setLoading(null);
+          setData(response);
+          setRemainingPackage(response.remainingPackage);
+        })
+        .catch(error => {
+          setLoading(null);
+          setAlert({
+            type: 'danger',
+            message: 'Có lỗi xảy ra, vui lòng thử lại sau',
+          });
+        });
+    }
+  }, []);
+
   return (
     <SafeAreaView style={style.container}>
+      {alert && (
+        <ModalMess
+          alert={alert}
+          setAlert={setAlert}
+          type={alert.type}
+          message={alert.message}
+        />
+      )}
+      {loading}
       <Header
         leftElement={
           <Icon name="west" size={30} onPress={() => navigation.goBack()} />
@@ -70,46 +120,92 @@ const BarcodeDetail = ({ navigation }) => {
           <Icon
             name="check"
             size={30}
-            color={primary}
-            onPress={() => navigation.goBack()}
+            color={COLORS.primary}
+            onPress={formik.submitForm}
           />
         }
       />
-      <View>
-        <Image
-          resizeMode="contain"
-          source={img}
-          style={{ width: '100%', height: 100 }}
-        />
+      <View
+        style={[
+          {
+            alignSelf: 'center',
+          },
+        ]}>
+        <Text
+          style={{
+            alignSelf: 'center',
+          }}>
+          <Barcode
+            width={1}
+            text={barcode}
+            value={barcode}
+            format="CODE128"
+            onError={error => console.log(error)}
+          />
+        </Text>
       </View>
-      <ScrollView
-        contentContainerStyle={{ padding: 20 }}
-        style={style.infoContainer}>
-        <Text style={FONTS.BigBold}>Thông tin gói hàng</Text>
-        <View style={style.info}>
-          <InfoField style={{ flex: 1 }} title="Tên" content="#CSGO112200" />
-          <InfoField
-            style={{ flex: 1 }}
-            title="Trọng lượng"
-            content="1000 kg"
-          />
-        </View>
-        <View style={style.info}>
-          <InfoField style={{ flex: 1 }} title="Còn lại" content="12" />
-          <InfoField
-            style={{ flex: 1 }}
-            title="Thể tích"
-            content="5m x 5m x 5m"
-          />
-        </View>
-        <View style={style.info}>
-          <InfoField style={{ flex: 1 }} title="Loại" content="Dễ vỡ" />
-          <InfoField style={{ flex: 1 }} title="Ghi chú" content="Không có" />
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <TextField title="Số lượng" keyboardType="numeric" />
-        </View>
-      </ScrollView>
+      <KeyboardAvoidingView
+        enabled
+        behavior="padding"
+        keyboardVerticalOffset={0}
+        style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: 20 }}
+          style={style.infoContainer}>
+          <Text style={FONTS.BigBold}>Thông tin kiện hàng</Text>
+          <View style={style.info}>
+            <InfoField
+              style={{ flex: 1 }}
+              title="Tên"
+              content={!data.name && 'Không có'}
+            />
+            <InfoField
+              style={{ flex: 1 }}
+              title="Trọng lượng"
+              content={data.weight + ' kg'}
+            />
+          </View>
+          <View style={style.info}>
+            <InfoField
+              style={{ flex: 1 }}
+              title="Số lượng còn lại"
+              content={remainingPackage + ' kiện'}
+            />
+            <InfoField
+              style={{ flex: 1 }}
+              title="Thể tích"
+              content={`${data?.size?.len}m x ${data?.size?.width}m x ${data?.size?.height}m`}
+            />
+          </View>
+          <View style={style.info}>
+            <InfoField
+              style={{ flex: 1 }}
+              title="Loại"
+              content={convertPackageType(data?.package_type?.package_type)}
+            />
+          </View>
+          <View style={{ marginTop: 20 }}>
+            <TextField
+              title="Số lượng cần nhập"
+              value={formik.values.importPackage.toString()}
+              onChangeText={text => formik.setFieldValue('importPackage', text)}
+              onBlur={() => formik.setFieldTouched('importPackage')}
+              keyboardType="numeric"
+              afterText="kiện"
+            />
+            {formik.touched.importPackage && formik.errors.importPackage ? (
+              <Text
+                style={{
+                  color: COLORS.danger,
+                  marginBottom: 15,
+                  fontWeight: 'bold',
+                }}>
+                {formik.errors.importPackage}
+              </Text>
+            ) : null}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -139,6 +235,13 @@ const style = StyleSheet.create({
     width: '100%',
     padding: 10,
     marginVertical: 20,
+  },
+  barcode: {
+    transform: [
+      {
+        translateX: 0.15 * width,
+      },
+    ],
   },
 });
 
