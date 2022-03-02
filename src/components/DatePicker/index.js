@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Platform, TextInput, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Input, Button, Card, Text } from 'react-native-elements';
-import { shadowCard, shadowInput } from '../../styles/layoutStyle';
+import { Button, Text } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native';
+import moment from 'moment';
 
 export const DatePicker = props => {
   const [date, setDate] = useState(
@@ -16,7 +16,6 @@ export const DatePicker = props => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
-    // 'onSetDate' in props && props.onSetDate(currentDate);
   };
 
   const showMode = currentMode => {
@@ -35,16 +34,10 @@ export const DatePicker = props => {
   return (
     <View style={{ marginBottom: 20 }}>
       {props.title && <Text style={style.containerTitle}>{props.title}</Text>}
-      <Card
-        wrapperStyle={{
-          padding: 15,
-          backgroundColor: '#FFF',
-          borderRadius: 30,
-        }}
-        containerStyle={style.container}>
+      <View style={style.container}>
         <Button
           onPress={showDatepicker}
-          title={date.toDateString()}
+          title={moment(date).format('DD-MM-YYYY HH:mm:ss')}
           buttonStyle={style.button}
           titleStyle={style.title}
           iconPosition="right"
@@ -69,7 +62,7 @@ export const DatePicker = props => {
             themeVarian="light"
           />
         )}
-      </Card>
+      </View>
     </View>
   );
 };
@@ -77,20 +70,19 @@ export const DatePicker = props => {
 const style = StyleSheet.create({
   container: {
     width: '100%',
-    borderRadius: 30,
-    padding: 3,
-    margin: 0,
+    padding: 10,
     marginTop: 15,
-    ...shadowInput,
+    backgroundColor: '#F3F3FA',
+    borderRadius: 8,
   },
   button: {
-    padding: 0,
+    paddingVertical: 7,
+    paddingHorizontal: 15,
     width: '100%',
-    backgroundColor: '#FFF',
+    backgroundColor: '#F3F3FA',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderRadius: 5,
   },
   title: {
     color: '#000',
@@ -98,7 +90,6 @@ const style = StyleSheet.create({
   },
   containerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
     color: '#000000',
   },
 });
