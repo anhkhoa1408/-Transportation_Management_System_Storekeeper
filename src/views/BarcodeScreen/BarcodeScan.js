@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, SafeAreaView, Alert } from 'react-native';
 import { STYLES } from '../../styles';
 import PrimaryButton from './../../components/CustomButton/PrimaryButton';
 
-const BarcodeScan = ({ navigation }) => {
+const BarcodeScan = ({ navigation, route }) => {
   const handleScanBarcode = e => {
     Alert.alert('aaaa', e.data);
   };
@@ -22,6 +22,7 @@ const BarcodeScan = ({ navigation }) => {
         onPress={() =>
           navigation.navigate('BarcodeDetail', {
             barcode: '61a983c312c1a70016415259',
+            ...route.params,
           })
         }
         title="tiếp tục"

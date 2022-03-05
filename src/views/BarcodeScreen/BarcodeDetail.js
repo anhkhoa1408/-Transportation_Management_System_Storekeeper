@@ -25,7 +25,7 @@ import Loading from './../../components/Loading';
 const width = Dimensions.get('screen').width;
 
 const BarcodeDetail = ({ navigation, route }) => {
-  const { barcode } = route?.params;
+  const { barcode, type } = route?.params;
   const [data, setData] = useState([]);
   const [remainingPackage, setRemainingPackage] = useState(0);
   const [alert, setAlert] = useState(null);
@@ -34,57 +34,84 @@ const BarcodeDetail = ({ navigation, route }) => {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      importPackage: 0,
+      packages: 0,
     },
     validationSchema: Bonk.object({
-      importPackage: Bonk.number()
-        .required('Chưa thêm số lượng cần nhập')
-        .min(0, 'Số lượng nhập phải lớn hơn 0')
+      packages: Bonk.number()
+        .required('Chưa thêm số lượng kiện hàng')
+        .min(1, 'Số lượng phải lớn hơn 0')
         .test(
           'package-test',
-          'Số lượng nhập vượt quá số kiện hàng còn lại',
+          'Số lượng vượt quá số kiện hàng còn lại',
           function checkExceedQuantity(quantity) {
             return quantity > remainingPackage ? false : true;
           },
         ),
     }),
-    onSubmit: values => handleUpdateImport(values),
+    onSubmit: values => handleUpdate(values),
   });
 
-  const handleUpdateImport = values => {
+  const handleUpdate = values => {
     setLoading(<Loading />);
-    storageApi
-      .updateImportQuantityByPackage({
-        packageId: barcode,
-        quantity:
-          data.quantity -
-          remainingPackage +
-          Number.parseInt(values.importPackage),
-      })
-      .then(response => {
-        setRemainingPackage(
-          remainingPackage - Number.parseInt(values.importPackage),
-        );
-        setAlert({
-          type: 'success',
-          message: 'Nhập kiện hàng thành công',
+    if (type === 'import') {
+      storageApi
+        .updateImportQuantityByPackage({
+          packageId: barcode,
+          quantity:
+            data.quantity - remainingPackage + Number.parseInt(values.packages),
+        })
+        .then(response => {
+          setRemainingPackage(
+            remainingPackage - Number.parseInt(values.packages),
+          );
+          setAlert({
+            type: 'success',
+            message: 'Nhập kiện hàng thành công',
+          });
+          setLoading(null);
+        })
+        .catch(error => {
+          setAlert({
+            type: 'danger',
+            message: 'Nhập kiện hàng thất bại',
+          });
+          setLoading(null);
         });
-        setLoading(null);
-      })
-      .catch(error => {
-        setAlert({
-          type: 'danger',
-          message: 'Nhập kiện hàng thất bại',
+    } else if (type === 'export') {
+      storageApi
+        .updateExportQuantityByPackage({
+          packageId: barcode,
+          quantity:
+            data.quantity - remainingPackage + Number.parseInt(values.packages),
+        })
+        .then(response => {
+          setRemainingPackage(
+            remainingPackage - Number.parseInt(values.packages),
+          );
+          setAlert({
+            type: 'success',
+            message: 'Nhập kiện hàng thành công',
+          });
+          setLoading(null);
+        })
+        .catch(error => {
+          setAlert({
+            type: 'danger',
+            message: 'Nhập kiện hàng thất bại',
+          });
+          setLoading(null);
         });
-        setLoading(null);
-      });
+    }
   };
 
   useEffect(() => {
     if (barcode) {
+      console.log(type);
       setLoading(<Loading />);
       packageApi
-        .getScannedPackage(barcode)
+        .getScannedPackage(barcode, {
+          type: type === 'import' ? 0 : 1,
+        })
         .then(response => {
           setLoading(null);
           setData(response);
@@ -186,21 +213,21 @@ const BarcodeDetail = ({ navigation, route }) => {
           </View>
           <View style={{ marginTop: 20 }}>
             <TextField
-              title="Số lượng cần nhập"
-              value={formik.values.importPackage.toString()}
-              onChangeText={text => formik.setFieldValue('importPackage', text)}
-              onBlur={() => formik.setFieldTouched('importPackage')}
+              title={`Số lượng ${type === 'import' ? 'nhập' : 'xuất'}`}
+              value={formik.values.packages.toString()}
+              onChangeText={text => formik.setFieldValue('packages', text)}
+              onBlur={() => formik.setFieldTouched('packages')}
               keyboardType="numeric"
               afterText="kiện"
             />
-            {formik.touched.importPackage && formik.errors.importPackage ? (
+            {formik.touched.packages && formik.errors.packages ? (
               <Text
                 style={{
                   color: COLORS.danger,
                   marginBottom: 15,
                   fontWeight: 'bold',
                 }}>
-                {formik.errors.importPackage}
+                {formik.errors.packages}
               </Text>
             ) : null}
           </View>

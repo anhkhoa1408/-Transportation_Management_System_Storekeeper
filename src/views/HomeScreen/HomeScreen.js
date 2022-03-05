@@ -22,11 +22,13 @@ function HomeScreen({ navigation, ...props }) {
       icon: 'add',
       title: 'Nhập kho',
       navigate: 'VehicleList',
+      type: 'import',
     },
     {
       icon: 'exit-to-app',
       title: 'Xuất kho',
       navigate: 'VehicleList',
+      type: 'export',
     },
     {
       icon: 'assignment',
@@ -47,7 +49,11 @@ function HomeScreen({ navigation, ...props }) {
   });
 
   const renderItem = ({ item }) => (
-    <InfoCard item={item} navigation={navigation} />
+    <InfoCard
+      item={item}
+      navigation={navigation}
+      type={item.type && item.type}
+    />
   );
   const keyExtractor = (item, index) => index.toString();
 

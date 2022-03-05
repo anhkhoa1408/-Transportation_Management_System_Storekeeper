@@ -22,9 +22,9 @@ class PackageApi {
     return axiosClient.get(url);
   };
 
-  getScannedPackage = id => {
+  getScannedPackage = (id, params) => {
     const url = MAIN_URL.concat(`/packages/scanned/${id}`);
-    return axiosClient.get(url);
+    return axiosClient.get(url, { params });
   };
 }
 

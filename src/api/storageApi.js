@@ -31,6 +31,11 @@ class StorageApi {
     const url = MAIN_URL.concat(`/imports/update-quantity`);
     return axiosClient.put(url, body);
   };
+
+  updateExportQuantityByPackage = body => {
+    const url = MAIN_URL.concat(`/exports/update-quantity`);
+    return axiosClient.put(url, body);
+  };
 }
 
 const storageApi = new StorageApi();
