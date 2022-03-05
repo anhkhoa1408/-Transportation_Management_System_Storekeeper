@@ -37,33 +37,32 @@ const EditReport = ({ navigation, route }) => {
       .editReport(item.id, values)
       .then(response => {
         setLoading(null);
-        setAlert(
-          <ModalMess
-            type="success"
-            message="Cập nhật thành công"
-            alert={alert}
-            setAlert={setAlert}
-          />,
-        );
+        setAlert({
+          type: 'success',
+          message: 'Cập nhật thông tin thành công',
+        });
         setItem({ ...item, ...response });
       })
       .catch(errors => {
         setLoading(null);
-        setAlert(
-          <ModalMess
-            type="danger"
-            message="Cập nhật thất bại"
-            alert={alert}
-            setAlert={setAlert}
-          />,
-        );
+        setAlert({
+          type: 'danger',
+          message: 'Cập nhật thông tin thất bại',
+        });
       });
   };
 
   return (
     <SafeAreaView style={style.container}>
       {loading}
-      {alert}
+      {alert && (
+        <ModalMess
+          type={alert.type}
+          message={alert.message}
+          alert={alert}
+          setAlert={setAlert}
+        />
+      )}
       <Header
         leftElement={
           <Icon name="west" size={30} onPress={() => navigation.goBack()} />
@@ -120,7 +119,6 @@ const EditReport = ({ navigation, route }) => {
           <TextField
             disabled
             editable={false}
-            disabled
             title="Người báo cáo"
             value={item.stocker.name}
           />

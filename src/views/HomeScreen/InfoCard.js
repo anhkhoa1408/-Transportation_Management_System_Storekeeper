@@ -6,7 +6,7 @@ import { shadowCard } from '../../styles/layoutStyle';
 import * as Animatable from 'react-native-animatable';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-const InfoCard = ({ item, navigation }) => {
+const InfoCard = ({ item, navigation, type }) => {
   const ref = useRef(null);
   const handlePress = async navigate => {
     await ref.current.animate({
@@ -25,7 +25,9 @@ const InfoCard = ({ item, navigation }) => {
         scale: 1,
       },
     });
-    navigation.navigate(navigate);
+    navigation.navigate(navigate, {
+      type: type,
+    });
   };
   return (
     <Animatable.View ref={ref} duration={500} easing="ease">

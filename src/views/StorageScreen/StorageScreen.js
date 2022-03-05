@@ -13,6 +13,7 @@ import Header from '../../components/Header';
 import { COLORS } from '../../styles';
 import * as Animatable from 'react-native-animatable';
 import PillButton from './../../components/CustomButton/PillButton';
+import PrimaryButton from './../../components/CustomButton/PrimaryButton';
 import packageApi from '../../api/packageApi';
 
 const StorageScreen = ({ navigation }) => {
@@ -20,6 +21,8 @@ const StorageScreen = ({ navigation }) => {
   const [page, setPage] = useState(0);
 
   const ref = useRef([]);
+
+  const getListPackage = packageApi.getImportedPackage;
 
   const handlePress = async (index, item) => {
     await ref[index].animate({
@@ -86,12 +89,27 @@ const StorageScreen = ({ navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      packageApi
-        .getImportedPackage({ page: page })
+      getListPackage({ page: 0 })
+        .then(response => {
+          setData(response);
+        })
+        .catch(error => console.log(error));
+    });
+
+    if (page) {
+      getListPackage({ page: page })
         .then(response => {
           setData([...data, ...response]);
         })
         .catch(error => console.log(error));
+    }
+
+    return unsubscribe;
+  }, [page]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setPage(0);
     });
 
     return unsubscribe;
@@ -113,23 +131,15 @@ const StorageScreen = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={item => `${item.id}`}
         ListEmptyComponent={
-          <View
-            style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingTop: '50%',
-            }}>
-            <Text>Chưa có lịch sử nhập xuất</Text>
+          <View style={style.noData}>
+            <Text>Chưa có kiện hàng trong kho</Text>
           </View>
         }
         ListFooterComponent={
           data.length > 5 && (
             <View style={{ padding: 20 }}>
-              <PillButton
-                // onPress={() => setPageImport(pageExport + 1)}
+              <PrimaryButton
+                onPress={() => setPage(page + 1)}
                 title="Xem thêm"
               />
             </View>
@@ -147,7 +157,7 @@ const style = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 12,
     borderColor: 'rgba(0,0,0,0.5)',
-    backgroundColor: '#F0F1F5',
+    backgroundColor: COLORS.gray,
     marginVertical: 15,
   },
   chatList: {
@@ -158,6 +168,14 @@ const style = StyleSheet.create({
   time: {
     alignSelf: 'flex-end',
     color: 'rgba(0,0,0,0.5)',
+  },
+  noData: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: '50%',
   },
 });
 

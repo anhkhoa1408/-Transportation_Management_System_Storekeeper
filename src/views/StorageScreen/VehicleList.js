@@ -15,7 +15,7 @@ import { primary, danger } from '../../styles/color';
 import { COLORS } from '../../styles';
 import * as Animatable from 'react-native-animatable';
 
-const VehicleList = ({ navigation }) => {
+const VehicleList = ({ navigation, route }) => {
   const [data, setData] = useState([
     {
       id: '#afoqijfoasdada'.toLocaleUpperCase(),
@@ -49,7 +49,7 @@ const VehicleList = ({ navigation }) => {
         scale: 1,
       },
     });
-    navigation.navigate('VehicleDetail');
+    navigation.navigate('VehicleDetail', route.params);
   };
 
   const renderItem = ({ item, index }) => (

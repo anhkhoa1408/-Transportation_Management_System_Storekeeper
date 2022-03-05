@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import {
-  Text,
-  Icon,
-  CheckBox,
-  Tab,
-  TabView,
-  ListItem,
-} from 'react-native-elements';
-import { container, header } from '../../styles/layoutStyle';
+import { View, StyleSheet, FlatList, SafeAreaView } from 'react-native';
+import { Text, Tab, TabView } from 'react-native-elements';
+import { container } from '../../styles/layoutStyle';
 import Loading from '../../components/Loading';
 import Header from '../../components/Header';
-import { danger, primary, success, warning } from '../../styles/color';
 import storageApi from '../../api/storageApi';
-import moment from 'moment';
+import PrimaryButton from './../../components/CustomButton/PrimaryButton';
+import Detail from './Detail/Detail';
+import { COLORS } from '../../styles';
 
 export default function HistoryScreen({ navigation }) {
   const [pageImport, setPageImport] = useState(0);
@@ -21,81 +15,88 @@ export default function HistoryScreen({ navigation }) {
   const [imports, setImports] = useState([]);
   const [exports, setExports] = useState([]);
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(<Loading />);
 
   const renderItem = ({ item, index }) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('HistoryDetail', { item })}>
-      <ListItem
-        containerStyle={{
-          padding: 20,
-          marginHorizontal: 20,
-          borderRadius: 12,
-          borderColor: 'rgba(0,0,0,0.5)',
-          backgroundColor: '#F0F1F5',
-          marginVertical: 15,
-        }}>
-        <View
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.6)',
-            padding: 10,
-            borderRadius: 15,
-          }}>
-          <Icon
-            size={30}
-            name="import-export"
-            iconStyle={{
-              color: '#FFF',
-            }}
-            containerStyle={{
-              backgroundColor: success,
-              padding: 10,
-              borderRadius: 25,
-            }}
-          />
-        </View>
-        <ListItem.Content>
-          <ListItem.Title>ID: {item.id}</ListItem.Title>
-          <ListItem.Subtitle>
-            {moment(item.createdAt).format('DD-MM-YYYY HH:mm:ss')}
-          </ListItem.Subtitle>
-        </ListItem.Content>
-        <ListItem.Chevron size={20} />
-      </ListItem>
-    </TouchableOpacity>
+    <Detail item={item} navigation={navigation} />
   );
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       Promise.all([
-        storageApi.importList({ page: pageImport }),
-        storageApi.exportList({ page: pageExport }),
+        storageApi.importList({ page: 0 }),
+        storageApi.exportList({ page: 0 }),
       ])
         .then(result => {
+          setLoading(null);
           setImports(result[0]);
           setExports(result[1]);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          setLoading(null);
+          console.log(err);
+        });
     });
 
     return unsubscribe;
-  }, [pageImport, pageExport]);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setPageImport(0);
+      setPageExport(0);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (pageExport) {
+      storageApi
+        .exportList({ page: pageExport })
+        .then(result => {
+          setLoading(null);
+          setExports([...exports, ...result]);
+        })
+        .catch(err => {
+          setLoading(null);
+          console.log(err);
+        });
+    }
+  }, [pageExport]);
+
+  useEffect(() => {
+    if (pageImport) {
+      storageApi
+        .importList({ page: pageImport })
+        .then(result => {
+          setLoading(null);
+          setImports([...imports, ...result]);
+        })
+        .catch(err => {
+          setLoading(null);
+          console.log(err);
+        });
+    }
+  }, [pageImport]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      {loading}
       <Header headerText="Lịch sử nhập xuất"></Header>
       <Tab
         value={index}
         onChange={e => setIndex(e)}
         indicatorStyle={{
-          backgroundColor: primary,
+          backgroundColor: COLORS.primary,
           height: 3,
         }}>
         <Tab.Item
           title="Nhập kho"
-          titleStyle={{ fontSize: 12, color: primary }}
+          titleStyle={{ fontSize: 12, color: COLORS.primary }}
           icon={{
             name: 'vertical-align-bottom',
-            color: primary,
+            color: COLORS.primary,
           }}
           containerStyle={{
             backgroundColor: '#FFF',
@@ -103,8 +104,8 @@ export default function HistoryScreen({ navigation }) {
         />
         <Tab.Item
           title="Xuất kho"
-          titleStyle={{ fontSize: 12, color: primary }}
-          icon={{ name: 'vertical-align-top', color: primary }}
+          titleStyle={{ fontSize: 12, color: COLORS.primary }}
+          icon={{ name: 'vertical-align-top', color: COLORS.primary }}
           containerStyle={{
             backgroundColor: '#FFF',
           }}
@@ -118,22 +119,14 @@ export default function HistoryScreen({ navigation }) {
             renderItem={renderItem}
             keyExtractor={item => `${item.id}`}
             ListEmptyComponent={
-              <View
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingTop: '50%',
-                }}>
+              <View style={styles.noData}>
                 <Text>Chưa có lịch sử nhập xuất</Text>
               </View>
             }
             ListFooterComponent={
               imports.length > 5 && (
                 <View style={{ padding: 20 }}>
-                  <PillButton
+                  <PrimaryButton
                     onPress={() => setPageImport(pageImport + 1)}
                     title="Xem thêm"
                   />
@@ -148,23 +141,15 @@ export default function HistoryScreen({ navigation }) {
             renderItem={renderItem}
             keyExtractor={item => `${item.id}`}
             ListEmptyComponent={
-              <View
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingTop: '50%',
-                }}>
+              <View style={styles.noData}>
                 <Text>Chưa có lịch sử nhập xuất</Text>
               </View>
             }
             ListFooterComponent={
               exports.length > 5 && (
                 <View style={{ padding: 20 }}>
-                  <PillButton
-                    onPress={() => setPageImport(pageExport + 1)}
+                  <PrimaryButton
+                    onPress={() => setPageExport(pageExport + 1)}
                     title="Xem thêm"
                   />
                 </View>
@@ -173,9 +158,7 @@ export default function HistoryScreen({ navigation }) {
           />
         </TabView.Item>
       </TabView>
-
-      {/* {exports.length == 0 && <Loading />} */}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -184,16 +167,6 @@ const styles = StyleSheet.create({
     ...container,
     alignItems: 'stretch',
     flex: 1,
-  },
-  shadow: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 3,
   },
   row: {
     flexWrap: 'nowrap',
@@ -206,5 +179,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  noData: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: '50%',
   },
 });

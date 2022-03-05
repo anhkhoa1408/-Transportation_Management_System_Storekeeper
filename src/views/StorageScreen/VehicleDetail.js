@@ -14,7 +14,7 @@ import { InfoField } from '../../components/InfoField';
 import ButtonSwitch from '../../components/ButtonSwitch';
 import BarcodeScanner from 'react-native-scan-barcode';
 
-const VehicleDetail = ({ navigation }) => {
+const VehicleDetail = ({ navigation, route }) => {
   const [expand, setExpand] = useState(true);
   const [checked, setChecked] = useState(false);
   const [data, setData] = useState([
@@ -71,7 +71,7 @@ const VehicleDetail = ({ navigation }) => {
               name="camera"
               type="font-awesome"
               color="#FFF"
-              onPress={() => navigation.navigate('BarcodeScan')}
+              onPress={() => navigation.navigate('BarcodeScan', route.params)}
             />
           </View>
         </View>

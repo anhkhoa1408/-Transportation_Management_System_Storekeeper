@@ -15,6 +15,7 @@ import PillButton from '../../components/CustomButton/PillButton';
 import { COLORS } from '../../styles';
 import storageApi from '../../api/storageApi';
 import moment from 'moment';
+import { simplifyString } from './../../utils/simplifyString';
 
 const ReportList = ({ navigation }) => {
   const [page, setPage] = useState(0);
@@ -39,12 +40,7 @@ const ReportList = ({ navigation }) => {
           : navigation.navigate('EditReport', item)
       }>
       <ListItem containerStyle={style.reportItem}>
-        <View
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.6)',
-            padding: 10,
-            borderRadius: 15,
-          }}>
+        <View style={style.item}>
           <Icon
             size={30}
             name="description"
@@ -59,9 +55,9 @@ const ReportList = ({ navigation }) => {
           />
         </View>
         <ListItem.Content>
-          <ListItem.Title>ID: {item.id}</ListItem.Title>
+          <ListItem.Title>ID: {simplifyString(item.id, 20)}</ListItem.Title>
           <ListItem.Subtitle>
-            Cập nhật: {moment(item.updatedAt).format('DD-MM-YYYY HH:mm:ss')}
+            Cập nhật: {moment(item.updatedAt).format('DD/MM/YYYY HH:mm')}
           </ListItem.Subtitle>
         </ListItem.Content>
         {check.some(item => item === true) ? (
@@ -80,13 +76,33 @@ const ReportList = ({ navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      storageApi.reportList({ page: page }).then(response => {
-        setData([...data, ...response]);
-      });
+      storageApi
+        .reportList({ page: 0 })
+        .then(response => {
+          setData(response);
+        })
+        .catch(error => console.log(error));
     });
+
+    if (page) {
+      storageApi
+        .reportList({ page: page })
+        .then(response => {
+          setData([...data, ...response]);
+        })
+        .catch(error => console.log(error));
+    }
 
     return unsubscribe;
   }, [page]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setPage(0);
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <SafeAreaView style={style.container}>
@@ -136,16 +152,8 @@ const ReportList = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={item => `${item.id}`}
         ListEmptyComponent={
-          <View
-            style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingTop: '50%',
-            }}>
-            <Text>Chưa có lịch sử nhập xuất</Text>
+          <View style={style.noData}>
+            <Text>Chưa có lịch sử báo cáo</Text>
           </View>
         }
         ListFooterComponent={
@@ -177,7 +185,7 @@ const style = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 12,
     borderColor: 'rgba(0,0,0,0.5)',
-    backgroundColor: '#F0F1F5',
+    backgroundColor: COLORS.gray,
     marginVertical: 15,
   },
   chatList: {
@@ -188,6 +196,19 @@ const style = StyleSheet.create({
   time: {
     alignSelf: 'flex-end',
     color: 'rgba(0,0,0,0.5)',
+  },
+  noData: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: '50%',
+  },
+  item: {
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    padding: 10,
+    borderRadius: 15,
   },
 });
 
