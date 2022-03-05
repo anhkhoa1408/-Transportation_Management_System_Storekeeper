@@ -21,7 +21,7 @@ function PrimaryButton(props) {
           : COLORS.primary,
       }}
       titleStyle={{
-        fontSize: 18,
+        fontSize: 16,
         textTransform: 'uppercase',
         color: props.neutralColor ? props.neutralColor : COLORS.white,
       }}
