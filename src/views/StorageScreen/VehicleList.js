@@ -14,30 +14,24 @@ import Header from '../../components/Header';
 import { primary, danger } from '../../styles/color';
 import { COLORS } from '../../styles';
 import * as Animatable from 'react-native-animatable';
+import shipmentApi from '../../api/shipmentAPI';
 
 const VehicleList = ({ navigation, route }) => {
-  const [data, setData] = useState([
-    {
-      id: '#afoqijfoasdada'.toLocaleUpperCase(),
-      position: '51',
-    },
-    {
-      id: '#bmiweopkrejgoi'.toLocaleUpperCase(),
-      position: '51',
-    },
-    {
-      id: '#opkopjqwoiasdd'.toLocaleUpperCase(),
-      position: '51',
-    },
-    {
-      id: '#fmppoekpokrope'.toLocaleUpperCase(),
-      position: '51',
-    },
-  ]);
+  const [data, setData] = useState([]);
+
+  const { type } = route.params;
+
+  React.useEffect(() => {
+    const getShipment =
+      type === 'import' ? shipmentApi.import : shipmentApi.export;
+    getShipment()
+      .then(data => setData(data))
+      .catch(err => console.log(err));
+  }, []);
 
   const ref = useRef([]);
 
-  const handlePress = async index => {
+  const handlePress = async (index, shipmentId, licence) => {
     await ref[index].animate({
       0: {
         scale: 1,
@@ -49,7 +43,7 @@ const VehicleList = ({ navigation, route }) => {
         scale: 1,
       },
     });
-    navigation.navigate('VehicleDetail', route.params);
+    navigation.navigate('VehicleDetail', { type, shipmentId, licence });
   };
 
   const renderItem = ({ item, index }) => (
@@ -57,7 +51,8 @@ const VehicleList = ({ navigation, route }) => {
       ref={ele => (ref[index] = ele)}
       duration={500}
       easing="ease">
-      <TouchableWithoutFeedback onPress={() => handlePress(index)}>
+      <TouchableWithoutFeedback
+        onPress={() => handlePress(index, item.id, item.licence)}>
         <ListItem containerStyle={style.storeItem}>
           <View
             style={{
@@ -79,8 +74,10 @@ const VehicleList = ({ navigation, route }) => {
             />
           </View>
           <ListItem.Content>
-            <ListItem.Title>{item.id}</ListItem.Title>
-            <ListItem.Subtitle>Khu vực: {item.position}</ListItem.Subtitle>
+            <ListItem.Title>{item.licence}</ListItem.Title>
+            <ListItem.Subtitle>
+              Khu vực: {item.from_address?.ward}
+            </ListItem.Subtitle>
           </ListItem.Content>
           <ListItem.Chevron size={30} />
         </ListItem>

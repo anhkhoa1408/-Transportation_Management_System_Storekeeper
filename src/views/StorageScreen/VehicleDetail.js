@@ -13,17 +13,20 @@ import { FONTS, COLORS } from '../../styles';
 import { InfoField } from '../../components/InfoField';
 import ButtonSwitch from '../../components/ButtonSwitch';
 import BarcodeScanner from 'react-native-scan-barcode';
+import shipmentApi from '../../api/shipmentAPI';
 
 const VehicleDetail = ({ navigation, route }) => {
+  const { shipmentId, licence, type } = route.params;
   const [expand, setExpand] = useState(true);
   const [checked, setChecked] = useState(false);
-  const [data, setData] = useState([
-    {
-      id: '#FOIJOJOF123',
-      quantity: 10,
-      current_address: 'kho Hà Nội',
-    },
-  ]);
+  const [data, setData] = useState({ packages: [] });
+
+  React.useEffect(() => {
+    shipmentApi
+      .shipmentDetail(shipmentId)
+      .then(data => setData(data))
+      .catch(err => console.log(err));
+  }, []);
 
   return (
     <SafeAreaView style={style.container}>
@@ -57,9 +60,9 @@ const VehicleDetail = ({ navigation, route }) => {
             color="#f50"
           />
           <View style={{ flex: 1 }}>
-            <Text style={[FONTS.BigBold]}>89C.121.12</Text>
-            <Text style={[FONTS.Smol]}>Người lái: Uchiha Madara</Text>
-            <Text style={[FONTS.Smol]}>Phụ xe: Uchiha Obito</Text>
+            <Text style={[FONTS.BigBold]}>{licence}</Text>
+            <Text style={[FONTS.Smol]}>Người lái: {data?.driver?.name}</Text>
+            <Text style={[FONTS.Smol]}>Phụ xe: {data?.assistance?.name}</Text>
           </View>
           <View
             style={{
@@ -79,12 +82,12 @@ const VehicleDetail = ({ navigation, route }) => {
           <InfoField
             style={{ flex: 1 }}
             title="Đến"
-            content="183/14 Bùi Viện"
+            content={`${data?.to_address?.ward}, ${data?.to_address?.city}`}
           />
           <InfoField
             style={{ flex: 1 }}
             title="Tổng khối lượng"
-            content="5000 kg"
+            content={data.total_weight}
           />
         </View>
         <Divider color={COLORS.primary} width={2} />
@@ -106,11 +109,11 @@ const VehicleDetail = ({ navigation, route }) => {
           <ScrollView
             style={{ height: '50%' }}
             contentContainerStyle={{ padding: 10 }}>
-            {data.map((item, index) => (
+            {data.packages.map((item, index) => (
               <TouchableOpacity
                 activeOpacity={0.9}
                 key={item.id}
-                onPress={() => navigation.navigate('EditPackage')}>
+                onPress={() => navigation.navigate('EditPackage', { item })}>
                 <View
                   key={item.id}
                   style={{
@@ -141,18 +144,16 @@ const VehicleDetail = ({ navigation, route }) => {
                         marginLeft: 10,
                         alignItems: 'flex-start',
                       }}>
-                      <Text style={{ ...FONTS.BigBold }}>ID: {item.id}</Text>
+                      <Text style={{ ...FONTS.BigBold }}>
+                        {item.name ? item.name : item.id}
+                      </Text>
                       <Text style={{ ...FONTS.Medium }}>
                         Số lượng:{' '}
-                        <Text style={{ ...style.info }}>
-                          {item.quantity}/100
-                        </Text>
+                        <Text style={{ ...style.info }}>{item.quantity}</Text>
                       </Text>
                       <Text style={{ ...FONTS.Medium }}>
                         Địa điểm hiện tại:{' '}
-                        <Text style={{ ...style.info }}>
-                          {item.current_address}
-                        </Text>
+                        <Text style={{ ...style.info }}>{item.position}</Text>
                       </Text>
                     </View>
                     <CheckBox
