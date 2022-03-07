@@ -98,25 +98,21 @@ const SignIn = ({ navigation }) => {
           icon="person-outline"
           placeholder="Tên đăng nhập"
           value={formik.values.email}
+          error={formik.errors.email && formik.touched.email}
+          errorMessage={formik.errors.email}
           onChangeText={setEmail}
           onBlur={() => {
             formik.setFieldTouched('email');
           }}
         />
-        {formik.touched.email && formik.errors.email ? (
-          <Text
-            style={{
-              color: danger,
-              fontWeight: 'bold',
-            }}>
-            {formik.errors.email}
-          </Text>
-        ) : null}
+
         <TextField
           name="password"
           icon="https"
           placeholder="Mật khẩu"
           value={formik.values.password}
+          error={formik.errors.password && formik.touched.password}
+          errorMessage={formik.errors.password}
           secureTextEntry={!showPass}
           onChangeText={setPassword}
           onBlur={() => formik.setFieldTouched('password')}
@@ -129,20 +125,13 @@ const SignIn = ({ navigation }) => {
             />
           }
         />
-        {formik.touched.password && formik.errors.password ? (
-          <Text
-            style={{
-              color: danger,
-              fontWeight: 'bold',
-            }}>
-            {formik.errors.password}
-          </Text>
-        ) : null}
+
         <TouchableOpacity onPress={() => navigation.navigate('forgotPassword')}>
           <Text style={styles.forgot}>Quên mật khẩu?</Text>
         </TouchableOpacity>
         <PrimaryButton title="Đăng nhập" onPress={formik.submitForm} />
       </View>
+
       <View style={[styles.container1]}>
         <Text style={[FONTS.Medium]}>Chưa có tài khoản? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Signup')}>

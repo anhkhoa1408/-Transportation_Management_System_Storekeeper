@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   SafeAreaView,
   ScrollView,
@@ -10,13 +9,11 @@ import {
 import { COLORS } from '../../styles';
 import authApi from '../../api/authApi';
 import { useDispatch } from 'react-redux';
-import { CLEAN_STORE } from '../../constants/types';
 import { store } from '../../config/configureStore';
 import { useFormik } from 'formik';
 import * as Bonk from 'yup';
 import { saveInfo } from '../../actions/actions';
 import ModalMess from '../../components/ModalMess';
-import { danger, success } from '../../styles/color';
 import { Avatar, Icon, Button } from 'react-native-elements';
 import Header from '../../components/Header';
 import TextField from '../../components/TextField';
@@ -125,7 +122,6 @@ const EditProfile = ({ navigation }) => {
                 underlayColor="#CCC"
                 style={{ backgroundColor: COLORS.primary }}
                 color={COLORS.white}
-                // onPress={() => console.log(1)}
                 size={35}
               />
             </Avatar>
@@ -137,35 +133,32 @@ const EditProfile = ({ navigation }) => {
             onChangeText={text => {
               formik.setFieldValue('name', text);
             }}
+            onBlur={() => formik.setFieldTouched('name')}
+            error={formik.touched.name && formik.errors.name}
             value={formik.values.name}
+            errorMessage={formik.errors.name}
           />
-
-          {formik.touched.name && formik.errors.name ? (
-            <Text style={{ color: danger }}>{formik.errors.name}</Text>
-          ) : null}
 
           <TextField
             title="Email"
             style={styles.fsize}
             value={formik.values.email}
             onChangeText={text => formik.setFieldValue('email', text)}
+            onBlur={() => formik.setFieldTouched('email')}
+            error={formik.touched.email && formik.errors.email}
+            errorMessage={formik.errors.email}
           />
-
-          {formik.touched.email && formik.errors.email ? (
-            <Text style={{ color: danger }}>{formik.errors.email}</Text>
-          ) : null}
 
           <TextField
             keyboardType="numeric"
             title="Số điện thoại"
             style={styles.fsize}
             value={formik.values.phone}
+            onBlur={() => formik.setFieldTouched('phone')}
             onChangeText={text => formik.setFieldValue('phone', text)}
+            error={formik.touched.phone && formik.errors.phone}
+            errorMessage={formik.errors.phone}
           />
-
-          {formik.touched.phone && formik.errors.phone ? (
-            <Text style={{ color: danger }}>{formik.errors.phone}</Text>
-          ) : null}
         </ScrollView>
 
         <PrimaryButton
@@ -173,7 +166,6 @@ const EditProfile = ({ navigation }) => {
           containerStyle={{ marginHorizontal: 25, marginBottom: 25 }}
           onPress={formik.submitForm}
           backgroundColor={COLORS.success}
-          // neutralColor={COLORS.success}
         />
       </KeyboardAvoidingView>
     </SafeAreaView>

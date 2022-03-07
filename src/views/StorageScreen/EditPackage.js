@@ -149,134 +149,81 @@ const EditPackage = ({ navigation, route }) => {
           <TextField
             title="Vị trí đặt hàng"
             value={formik.values.position}
+            error={formik.touched.position && formik.errors.position}
+            errorMessage={formik.errors.position}
             onChangeText={text => formik.setFieldValue('position', text)}
             onBlur={() => formik.setFieldTouched('position')}
           />
-          {formik.touched.position && formik.errors.position ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.position}
-            </Text>
-          ) : null}
 
           <TextField
             title="Chiều dài"
             afterText="cm"
             keyboardType="numeric"
             value={formik.values.len.toString()}
+            error={formik.touched.len && formik.errors.len}
+            errorMessage={formik.errors.len}
             onChangeText={text => formik.setFieldValue('len', text)}
             onBlur={() => formik.setFieldTouched('len')}
           />
-          {formik.touched.len && formik.errors.len ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.len}
-            </Text>
-          ) : null}
 
           <TextField
             title="Chiều rộng"
             afterText="cm"
             keyboardType="numeric"
             value={formik.values.width.toString()}
+            error={formik.touched.width && formik.errors.width}
+            errorMessage={formik.errors.width}
             onChangeText={text => formik.setFieldValue('width', text)}
             onBlur={() => formik.setFieldTouched('width')}
           />
-          {formik.touched.width && formik.errors.width ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.width}
-            </Text>
-          ) : null}
 
           <TextField
             title="Chiều cao"
             afterText="cm"
             keyboardType="numeric"
             value={formik.values.height.toString()}
+            error={formik.touched.height && formik.errors.height}
+            errorMessage={formik.errors.height}
             onChangeText={text => formik.setFieldValue('height', text)}
             onBlur={() => formik.setFieldTouched('height')}
           />
-          {formik.touched.height && formik.errors.height ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.height}
-            </Text>
-          ) : null}
 
           <TextField
             title="Cân nặng"
             afterText="kg"
             keyboardType="numeric"
             value={formik.values.weight.toString()}
+            error={formik.touched.weight && formik.errors.weight}
+            errorMessage={formik.errors.weight}
             onChangeText={text => formik.setFieldValue('weight', text)}
             onBlur={() => formik.setFieldTouched('weight')}
           />
-          {formik.touched.weight && formik.errors.weight ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.weight}
-            </Text>
-          ) : null}
 
           <TextField
             title="Số lượng đã nhập"
             afterText="kiện"
             keyboardType="numeric"
             value={formik.values.importedQuantity.toString()}
+            error={
+              formik.touched.importedQuantity && formik.errors.importedQuantity
+            }
+            errorMessage={formik.errors.importedQuantity}
             onChangeText={text =>
               formik.setFieldValue('importedQuantity', text)
             }
             onBlur={() => formik.setFieldTouched('importedQuantity')}
           />
-          {formik.touched.importedQuantity && formik.errors.importedQuantity ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.importedQuantity}
-            </Text>
-          ) : null}
 
           <TextField
             title="Tổng số lượng"
             afterText="kiện"
             keyboardType="numeric"
             value={formik.values.quantity.toString()}
+            error={formik.touched.quantity && formik.errors.quantity}
+            errorMessage={formik.errors.quantity}
             onChangeText={text => formik.setFieldValue('quantity', text)}
+            onBlur={() => formik.setFieldTouched('quantity')}
           />
-          {formik.touched.quantity && formik.errors.quantity ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.quantity}
-            </Text>
-          ) : null}
 
           <Select
             data={data}
@@ -284,12 +231,6 @@ const EditPackage = ({ navigation, route }) => {
             setSelected={setSelected}
             title="Loại"
           />
-
-          {/* <CustomInput
-          title="Ghi chú"
-          value={formik.values.note}
-          onChangeText={text => formik.setFieldValue('note', text)}
-        /> */}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

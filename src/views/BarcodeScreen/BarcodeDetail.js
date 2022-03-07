@@ -21,6 +21,7 @@ import { useFormik } from 'formik';
 import * as Bonk from 'yup';
 import ModalMess from './../../components/ModalMess';
 import Loading from './../../components/Loading';
+import PrimaryButton from './../../components/CustomButton/PrimaryButton';
 
 const width = Dimensions.get('screen').width;
 
@@ -106,7 +107,6 @@ const BarcodeDetail = ({ navigation, route }) => {
 
   useEffect(() => {
     if (barcode) {
-      console.log(type);
       setLoading(<Loading />);
       packageApi
         .getScannedPackage(barcode, {
@@ -142,15 +142,7 @@ const BarcodeDetail = ({ navigation, route }) => {
         leftElement={
           <Icon name="west" size={30} onPress={() => navigation.goBack()} />
         }
-        headerText={'Quét mã barcode'}
-        rightElement={
-          <Icon
-            name="check"
-            size={30}
-            color={COLORS.primary}
-            onPress={formik.submitForm}
-          />
-        }
+        headerText={'Thông tin barcode'}
       />
       <View
         style={[
@@ -179,37 +171,41 @@ const BarcodeDetail = ({ navigation, route }) => {
         <ScrollView
           contentContainerStyle={{ paddingHorizontal: 20 }}
           style={style.infoContainer}>
-          <Text style={FONTS.BigBold}>Thông tin kiện hàng</Text>
-          <View style={style.info}>
-            <InfoField
-              style={{ flex: 1 }}
-              title="Tên"
-              content={!data.name && 'Không có'}
-            />
-            <InfoField
-              style={{ flex: 1 }}
-              title="Trọng lượng"
-              content={data.weight + ' kg'}
-            />
-          </View>
-          <View style={style.info}>
-            <InfoField
-              style={{ flex: 1 }}
-              title="Số lượng còn lại"
-              content={remainingPackage + ' kiện'}
-            />
-            <InfoField
-              style={{ flex: 1 }}
-              title="Thể tích"
-              content={`${data?.size?.len}m x ${data?.size?.width}m x ${data?.size?.height}m`}
-            />
-          </View>
-          <View style={style.info}>
-            <InfoField
-              style={{ flex: 1 }}
-              title="Loại"
-              content={convertPackageType(data?.package_type?.package_type)}
-            />
+          <Text style={[{ fontSize: 20, marginBottom: 10 }]}>
+            Thông tin kiện hàng
+          </Text>
+          <View style={[style.infoPackages]}>
+            <View style={style.info}>
+              <InfoField
+                style={{ flex: 1 }}
+                title="Tên"
+                content={!data.name && 'Không có'}
+              />
+              <InfoField
+                style={{ flex: 1 }}
+                title="Trọng lượng"
+                content={data.weight + ' kg'}
+              />
+            </View>
+            <View style={style.info}>
+              <InfoField
+                style={{ flex: 1 }}
+                title="Số lượng còn lại"
+                content={remainingPackage + ' kiện'}
+              />
+              <InfoField
+                style={{ flex: 1 }}
+                title="Thể tích"
+                content={`${data?.size?.len}m x ${data?.size?.width}m x ${data?.size?.height}m`}
+              />
+            </View>
+            <View style={style.info}>
+              <InfoField
+                style={{ flex: 1 }}
+                title="Loại"
+                content={convertPackageType(data?.package_type?.package_type)}
+              />
+            </View>
           </View>
           <View style={{ marginTop: 20 }}>
             <TextField
@@ -219,18 +215,11 @@ const BarcodeDetail = ({ navigation, route }) => {
               onBlur={() => formik.setFieldTouched('packages')}
               keyboardType="numeric"
               afterText="kiện"
+              error={formik.touched.packages && formik.errors.packages}
+              errorMessage={formik.errors.packages}
             />
-            {formik.touched.packages && formik.errors.packages ? (
-              <Text
-                style={{
-                  color: COLORS.danger,
-                  marginBottom: 15,
-                  fontWeight: 'bold',
-                }}>
-                {formik.errors.packages}
-              </Text>
-            ) : null}
           </View>
+          <PrimaryButton title="Thực hiện" onPress={formik.submitForm} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -245,10 +234,6 @@ const style = StyleSheet.create({
   input: {
     padding: 15,
     backgroundColor: '#FFF',
-  },
-  form: {
-    paddingHorizontal: 30,
-    paddingVertical: 15,
   },
   info: {
     display: 'flex',
@@ -269,6 +254,12 @@ const style = StyleSheet.create({
         translateX: 0.15 * width,
       },
     ],
+  },
+  infoPackages: {
+    backgroundColor: COLORS.gray,
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
 });
 
