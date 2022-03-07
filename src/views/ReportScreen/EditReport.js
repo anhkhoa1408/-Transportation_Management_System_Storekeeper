@@ -126,37 +126,23 @@ const EditReport = ({ navigation, route }) => {
           <TextField
             title="Tổng số lần nhập"
             afterText="lần"
+            error={formik.touched.total_import && formik.errors.total_import}
+            errorMessage={formik.errors.total_import}
             keyboardType="numeric"
+            onBlur={() => formik.setFieldTouched('total_import')}
             onChangeText={text => formik.setFieldValue('total_import', text)}
             value={formik.values.total_import.toString()}
           />
-          {formik.touched.total_import && formik.errors.total_import ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.total_import}
-            </Text>
-          ) : null}
           <TextField
             title="Tổng số lần xuất"
             afterText="lần"
+            error={formik.touched.total_export && formik.errors.total_export}
+            errorMessage={formik.errors.total_export}
             keyboardType="numeric"
+            onBlur={() => formik.setFieldTouched('total_export')}
             onChangeText={text => formik.setFieldValue('total_export', text)}
             value={formik.values.total_export.toString()}
           />
-          {formik.touched.total_export && formik.errors.total_export ? (
-            <Text
-              style={{
-                color: COLORS.danger,
-                marginBottom: 15,
-                fontWeight: 'bold',
-              }}>
-              {formik.errors.total_export}
-            </Text>
-          ) : null}
           <CustomInput
             title="Ghi chú"
             onChangeText={text => formik.setFieldValue('note', text)}

@@ -170,6 +170,8 @@ const homeStyle = StyleSheet.create({
     marginTop: 0,
     flexDirection: 'column',
     ...shadowCard,
+    shadowColor: COLORS.primary,
+    elevation: 15,
   },
 });
 

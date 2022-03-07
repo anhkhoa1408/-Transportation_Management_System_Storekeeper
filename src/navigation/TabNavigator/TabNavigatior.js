@@ -63,8 +63,7 @@ const TabNavigatior = () => {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        activeOpacity={1}
-        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        activeOpacity={1}>
         <Animatable.View
           ref={viewRef}
           duration={duration}
@@ -78,7 +77,7 @@ const TabNavigatior = () => {
             <Icon
               name={iconName}
               size={25}
-              color={focused ? COLORS.white : '#C9C9C9'}
+              color={focused ? COLORS.white : '#D3D3DA'}
             />
           </View>
           <Animatable.Text ref={textRef} style={style.text}>
@@ -96,6 +95,7 @@ const TabNavigatior = () => {
       activeColor={COLORS.primary}
       barStyle={style.container}
       screenOptions={({ route }) => ({
+        lazy: true,
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
@@ -172,6 +172,8 @@ const style = StyleSheet.create({
     marginHorizontal: 20,
     bottom: 15,
     borderRadius: 20,
+    shadowColor: COLORS.primary,
+    elevation: 10,
   },
   btn: {
     width: 50,
