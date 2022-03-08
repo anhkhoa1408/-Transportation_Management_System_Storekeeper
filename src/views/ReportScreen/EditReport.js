@@ -12,7 +12,7 @@ import { useFormik } from 'formik';
 import storageApi from '../../api/storageApi';
 import Loading from './../../components/Loading';
 import ModalMess from './../../components/ModalMess';
-import { KeyboardAvoidingView } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const EditReport = ({ navigation, route }) => {
   const [item, setItem] = useState(route?.params);
@@ -77,10 +77,7 @@ const EditReport = ({ navigation, route }) => {
           />
         }
       />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior="padding"
-        keyboardVerticalOffset={0}>
+      <KeyboardAwareScrollView enableOnAndroid enableAutomaticScroll>
         <ScrollView contentContainerStyle={style.form}>
           <TextField
             disabled
@@ -149,7 +146,7 @@ const EditReport = ({ navigation, route }) => {
             value={formik.values.note}
           />
         </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

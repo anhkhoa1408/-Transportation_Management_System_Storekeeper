@@ -19,8 +19,11 @@ import storageApi from '../../api/storageApi';
 import packageApi from '../../api/packageApi';
 import ModalMess from './../../components/ModalMess';
 import Loading from './../../components/Loading';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const EditPackage = ({ navigation, route }) => {
+  const { type } = route?.params;
+
   const [item, setItem] = useState(route?.params?.item);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(null);
@@ -33,7 +36,7 @@ const EditPackage = ({ navigation, route }) => {
       len: item.size.len,
       width: item.size.width,
       height: item.size.height,
-      importedQuantity: item.quantity, // TODO:
+      importedQuantity: item.quantity,
     },
     validationSchema: Bonk.object({
       position: Bonk.string().required('Thông tin bắt buộc'),
@@ -54,10 +57,11 @@ const EditPackage = ({ navigation, route }) => {
   const handleSubmit = values => {
     setLoading(<Loading />);
     Promise.all([
-      storageApi.editImport(values.importedId, {
-        quantity: values.importedQuantity,
-        packageId: values.id,
-      }),
+      !type &&
+        storageApi.editImport(values.importedId, {
+          quantity: values.importedQuantity,
+          packageId: values.id,
+        }),
       packageApi.editPackage(values.id, {
         ...values,
         package_type: selected,
@@ -65,9 +69,9 @@ const EditPackage = ({ navigation, route }) => {
     ])
       .then(response => {
         setItem({
-          importedQuantity: response[0].quantity,
-          importedId: response[0].id,
-          ...response[0].package,
+          importedQuantity: !type && response[0].quantity,
+          importedId: !type && response[0].id,
+          ...(!type && response[0].package),
           ...response[1],
         });
         setLoading(null);
@@ -129,10 +133,7 @@ const EditPackage = ({ navigation, route }) => {
           />
         }
       />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior="padding"
-        keyboardVerticalOffset={-100}>
+      <KeyboardAwareScrollView enableAutomaticScroll enableOnAndroid>
         <ScrollView contentContainerStyle={style.form}>
           <TextField
             editable={false}
@@ -199,20 +200,23 @@ const EditPackage = ({ navigation, route }) => {
             onBlur={() => formik.setFieldTouched('weight')}
           />
 
-          <TextField
-            title="Số lượng đã nhập"
-            afterText="kiện"
-            keyboardType="numeric"
-            value={formik.values.importedQuantity.toString()}
-            error={
-              formik.touched.importedQuantity && formik.errors.importedQuantity
-            }
-            errorMessage={formik.errors.importedQuantity}
-            onChangeText={text =>
-              formik.setFieldValue('importedQuantity', text)
-            }
-            onBlur={() => formik.setFieldTouched('importedQuantity')}
-          />
+          {!type && (
+            <TextField
+              title="Số lượng đã nhập"
+              afterText="kiện"
+              keyboardType="numeric"
+              value={formik.values.importedQuantity.toString()}
+              error={
+                formik.touched.importedQuantity &&
+                formik.errors.importedQuantity
+              }
+              errorMessage={formik.errors.importedQuantity}
+              onChangeText={text =>
+                formik.setFieldValue('importedQuantity', text)
+              }
+              onBlur={() => formik.setFieldTouched('importedQuantity')}
+            />
+          )}
 
           <TextField
             title="Tổng số lượng"
@@ -232,7 +236,7 @@ const EditPackage = ({ navigation, route }) => {
             title="Loại"
           />
         </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

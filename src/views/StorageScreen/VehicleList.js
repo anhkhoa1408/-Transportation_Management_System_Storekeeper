@@ -2,22 +2,23 @@ import React, { useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   FlatList,
   SafeAreaView,
   TouchableWithoutFeedback,
+  VirtualizedList,
 } from 'react-native';
 import { Text, ListItem, Icon, CheckBox } from 'react-native-elements';
 import CustomSearch from '../../components/CustomSearch/CustomSearch';
 import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
-import { primary, danger } from '../../styles/color';
 import { COLORS } from '../../styles';
 import * as Animatable from 'react-native-animatable';
 import shipmentApi from '../../api/shipmentAPI';
+import Loading from './../../components/Loading';
 
 const VehicleList = ({ navigation, route }) => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(<Loading />);
 
   const { type } = route.params;
 
@@ -25,8 +26,14 @@ const VehicleList = ({ navigation, route }) => {
     const getShipment =
       type === 'import' ? shipmentApi.import : shipmentApi.export;
     getShipment()
-      .then(data => setData(data))
-      .catch(err => console.log(err));
+      .then(data => {
+        setData(data);
+        setLoading(null);
+      })
+      .catch(err => {
+        setLoading(null);
+        console.log(err);
+      });
   }, []);
 
   const ref = useRef([]);
@@ -74,9 +81,9 @@ const VehicleList = ({ navigation, route }) => {
             />
           </View>
           <ListItem.Content>
-            <ListItem.Title>{item.licence}</ListItem.Title>
+            <ListItem.Title>{item?.licence}</ListItem.Title>
             <ListItem.Subtitle>
-              Khu vực: {item.from_address?.ward}
+              Khu vực: {item?.from_address?.ward}
             </ListItem.Subtitle>
           </ListItem.Content>
           <ListItem.Chevron size={30} />
@@ -87,6 +94,7 @@ const VehicleList = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={style.container}>
+      {loading}
       <Header
         leftElement={
           <Icon name="west" size={30} onPress={() => navigation.goBack()} />
@@ -98,13 +106,16 @@ const VehicleList = ({ navigation, route }) => {
         <CustomSearch />
       </View>
 
-      <FlatList
+      <VirtualizedList
         style={{
           alignSelf: 'stretch',
         }}
+        initialNumToRender={5}
         data={data}
+        getItemCount={() => data.length}
+        getItem={(item, index) => item[index]}
         renderItem={renderItem}
-        keyExtractor={item => `${item.id}`}
+        keyExtractor={item => `${item?.id}`}
         ListEmptyComponent={
           <View
             style={{
