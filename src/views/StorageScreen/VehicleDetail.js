@@ -87,7 +87,7 @@ const VehicleDetail = ({ navigation, route }) => {
           <InfoField
             style={{ flex: 1 }}
             title="Tổng khối lượng"
-            content={data.total_weight}
+            content={data.total_weight + ' kg'}
           />
         </View>
         <Divider color={COLORS.primary} width={2} />
@@ -106,6 +106,7 @@ const VehicleDetail = ({ navigation, route }) => {
           onPress={() => {
             setExpand(!expand);
           }}>
+          {/* Package list */}
           <ScrollView
             style={{ height: '50%' }}
             contentContainerStyle={{ padding: 10 }}>
@@ -113,17 +114,10 @@ const VehicleDetail = ({ navigation, route }) => {
               <TouchableOpacity
                 activeOpacity={0.9}
                 key={item.id}
-                onPress={() => navigation.navigate('EditPackage', { item })}>
-                <View
-                  key={item.id}
-                  style={{
-                    paddingVertical: 15,
-                    paddingHorizontal: 15,
-                    marginVertical: 15,
-                    borderRadius: 20,
-                    backgroundColor: '#FFF',
-                    elevation: 2,
-                  }}>
+                onPress={() =>
+                  navigation.navigate('EditPackage', { item, type })
+                }>
+                <View key={item.id} style={style.package}>
                   <View style={{ ...style.vehicle }}>
                     <Icon
                       containerStyle={{
@@ -212,15 +206,14 @@ const style = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 15,
   },
-  shadow: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 3,
+  package: {
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    marginVertical: 8,
+    borderRadius: 12,
+    backgroundColor: COLORS.white,
+    shadowColor: COLORS.primary,
+    elevation: 18,
   },
   smolText: {
     fontSize: 12,
