@@ -24,7 +24,7 @@ const EditPackage = ({ navigation, route }) => {
   const [item, setItem] = useState(route?.params?.item);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(null);
-  const [selected, setSelected] = useState(item.package_type.package_type);
+  const [selected, setSelected] = useState(item.package_type);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -60,7 +60,7 @@ const EditPackage = ({ navigation, route }) => {
       }),
       packageApi.editPackage(values.id, {
         ...values,
-        type: selected,
+        package_type: selected,
       }),
     ])
       .then(response => {
@@ -138,7 +138,7 @@ const EditPackage = ({ navigation, route }) => {
             editable={false}
             title="Mã barcode"
             disabled
-            value={formik.values.code}
+            value={formik.values.id}
           />
           <TextField
             editable={false}

@@ -76,7 +76,6 @@ const StorageScreen = ({ navigation }) => {
           </View>
           <ListItem.Content>
             <ListItem.Title>{item.package.id}</ListItem.Title>
-            <ListItem.Subtitle>Barcode: {item.code}</ListItem.Subtitle>
             <ListItem.Subtitle>
               Vị tri: Khu {item.package.position}
             </ListItem.Subtitle>
