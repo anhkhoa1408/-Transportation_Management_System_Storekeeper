@@ -18,6 +18,7 @@ import Header from '../../components/Header';
 import TextField from '../../components/TextField';
 import PrimaryButton from '../../components/CustomButton/PrimaryButton';
 import Loading from '../../components/Loading';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ChangePass = ({ navigation }) => {
   const [data, setData] = useState({
@@ -71,66 +72,60 @@ const ChangePass = ({ navigation }) => {
         headerText="Đổi mật khẩu"
       />
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior="padding"
-        keyboardVerticalOffset={10}>
-        <ScrollView contentContainerStyle={{ padding: 25 }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              marginBottom: 25,
-            }}>
-            Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm chữ in hoa, số và khác
-            với mật khẩu hiện tại
-          </Text>
+      <KeyboardAwareScrollView
+        enableOnAndroid
+        enableAutomaticScroll
+        contentContainerStyle={{ padding: 25 }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            marginBottom: 25,
+          }}>
+          Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm chữ in hoa, số và khác
+          với mật khẩu hiện tại
+        </Text>
 
-          <TextField
-            title="Mật khẩu hiện tại"
-            style={styles.fsize}
-            value={formik.values.currPass}
-            secureTextEntry
-            onChangeText={text => formik.setFieldValue('currPass', text)}
-            error={formik.touched.currPass && formik.errors.currPass}
-            errorMessage={formik.errors.currPass}
-            onBlur={() => formik.setFieldTouched('currPass')}
-          />
+        <TextField
+          title="Mật khẩu hiện tại"
+          value={formik.values.currPass}
+          secureTextEntry
+          onChangeText={text => formik.setFieldValue('currPass', text)}
+          error={formik.touched.currPass && formik.errors.currPass}
+          errorMessage={formik.errors.currPass}
+          onBlur={() => formik.setFieldTouched('currPass')}
+        />
 
-          <TextField
-            title="Mật khẩu mới"
-            style={styles.fsize}
-            value={formik.values.password}
-            secureTextEntry
-            onChangeText={text => formik.setFieldValue('password', text)}
-            error={formik.touched.password && formik.errors.password}
-            errorMessage={formik.errors.password}
-            onBlur={() => formik.setFieldTouched('password')}
-          />
+        <TextField
+          title="Mật khẩu mới"
+          value={formik.values.password}
+          secureTextEntry
+          onChangeText={text => formik.setFieldValue('password', text)}
+          error={formik.touched.password && formik.errors.password}
+          errorMessage={formik.errors.password}
+          onBlur={() => formik.setFieldTouched('password')}
+        />
 
-          <TextField
-            title="Xác nhận mật khẩu"
-            style={styles.fsize}
-            value={formik.values.confirmPassword}
-            secureTextEntry
-            onChangeText={text => formik.setFieldValue('confirmPassword', text)}
-            error={
-              formik.touched.confirmPassword && formik.errors.confirmPassword
-            }
-            errorMessage={formik.errors.confirmPassword}
-            onBlur={() => formik.setFieldTouched('confirmPassword')}
-          />
-        </ScrollView>
+        <TextField
+          title="Xác nhận mật khẩu"
+          value={formik.values.confirmPassword}
+          secureTextEntry
+          onChangeText={text => formik.setFieldValue('confirmPassword', text)}
+          error={
+            formik.touched.confirmPassword && formik.errors.confirmPassword
+          }
+          errorMessage={formik.errors.confirmPassword}
+          onBlur={() => formik.setFieldTouched('confirmPassword')}
+        />
 
         <PrimaryButton
           title="Cập nhật"
           onPress={formik.submitForm}
           backgroundColor={COLORS.success}
           containerStyle={{
-            marginBottom: 25,
-            marginHorizontal: 25,
+            marginTop: 30,
           }}
         />
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

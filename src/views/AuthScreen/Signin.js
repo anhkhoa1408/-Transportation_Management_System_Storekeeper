@@ -12,13 +12,13 @@ import authApi from '../../api/authApi';
 import { useDispatch } from 'react-redux';
 import * as Bonk from 'yup';
 import { useFormik } from 'formik';
-import { danger } from '../../styles/color';
 import { saveInfo } from '../../actions/actions';
 import Loading from './../../components/Loading';
 import ModalMess from '../../components/ModalMess';
-import banner_signin from './../../assets/images/banner_signin.jpg';
-import { Icon, Image, Text } from 'react-native-elements';
+import banner from './../../assets/images/banner_signin.jpg';
+import { Icon, Image, Text, SocialIcon } from 'react-native-elements';
 import PrimaryButton from '../../components/CustomButton/PrimaryButton';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -55,83 +55,128 @@ const SignIn = ({ navigation }) => {
       })
       .then(data => {
         dispatch(saveInfo(data));
+        socket.connect();
+        syncToken();
         setLoading(null);
       })
       .catch(err => {
-        setAlert(
-          <ModalMess
-            type="danger"
-            message="Tên tài khoản hoặc mật khẩu không đúng"
-            alert={alert}
-            setAlert={setAlert}
-          />,
-        );
+        setAlert({
+          type: 'warning',
+          message: 'Tài khoản hoặc mật khẩu không đúng!',
+        });
         setLoading(null);
       });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {alert}
+      {alert && (
+        <ModalMess
+          type={alert.type}
+          message={alert.message}
+          alert={alert}
+          setAlert={setAlert}
+        />
+      )}
       {loading}
-      <Image
-        source={banner_signin}
-        resizeMode="contain"
-        style={{
-          height: 130,
-          alignSelf: 'center',
-          display: 'flex',
-          marginBottom: 20,
-        }}
-      />
-
-      <View style={{ alignItems: 'center' }}>
-        <Text h2 style={{ marginBottom: 10 }}>
-          Xin chào
-        </Text>
-        <Text>Đăng nhập để bắt đầu sử dụng dịch vụ của chúng tôi</Text>
-      </View>
-
-      <View style={{ ...styles.form, flex: 1 }}>
-        <TextField
-          name="email"
-          icon="person-outline"
-          placeholder="Tên đăng nhập"
-          value={formik.values.email}
-          error={formik.errors.email && formik.touched.email}
-          errorMessage={formik.errors.email}
-          onChangeText={setEmail}
-          onBlur={() => {
-            formik.setFieldTouched('email');
+      <KeyboardAwareScrollView enableOnAndroid enableAutomaticScroll>
+        <Image
+          source={banner}
+          resizeMode="contain"
+          style={{
+            height: 130,
+            alignSelf: 'center',
+            display: 'flex',
+            marginBottom: 20,
           }}
         />
+        <View style={{ alignItems: 'center' }}>
+          <Text h2 style={{ marginBottom: 10 }}>
+            Xin chào
+          </Text>
+          <Text style={styles.subTitle}>
+            Đăng nhập để bắt đầu sử dụng dịch vụ của chúng tôi
+          </Text>
+        </View>
 
-        <TextField
-          name="password"
-          icon="https"
-          placeholder="Mật khẩu"
-          value={formik.values.password}
-          error={formik.errors.password && formik.touched.password}
-          errorMessage={formik.errors.password}
-          secureTextEntry={!showPass}
-          onChangeText={setPassword}
-          onBlur={() => formik.setFieldTouched('password')}
-          afterComponent={
+        <View style={{ ...styles.form }}>
+          <TextField
+            name="email"
+            icon="person-outline"
+            placeholder="Tên đăng nhập"
+            value={formik.values.email}
+            onChangeText={setEmail}
+            onBlur={() => {
+              formik.setFieldTouched('email');
+            }}
+            error={formik.touched.email && formik.errors.email}
+            errorMessage={formik.errors.email}
+          />
+
+          <TextField
+            name="password"
+            icon="https"
+            placeholder="Mật khẩu"
+            value={formik.values.password}
+            secureTextEntry={!showPass}
+            onChangeText={setPassword}
+            onBlur={() => formik.setFieldTouched('password')}
+            afterComponent={
+              <Icon
+                onPress={() => setShowPass(!showPass)}
+                name={!showPass ? 'visibility' : 'visibility-off'}
+                size={25}
+                color={COLORS.primary}
+              />
+            }
+            error={formik.touched.password && formik.errors.password}
+            errorMessage={formik.errors.password}
+          />
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('forgotPassword')}>
+            <Text style={styles.forgot}>Quên mật khẩu?</Text>
+          </TouchableOpacity>
+          <PrimaryButton title="Đăng nhập" onPress={formik.submitForm} />
+        </View>
+
+        <View
+          style={{
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 10,
+            flex: 1,
+          }}>
+          <Text style={styles.subTitle}>Đăng nhập với</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flex: 1,
+            }}>
             <Icon
-              onPress={() => setShowPass(!showPass)}
-              name={!showPass ? 'visibility' : 'visibility-off'}
-              size={25}
-              color={COLORS.primary}
+              name="google"
+              type="font-awesome"
+              color="#4285F4"
+              containerStyle={styles.icon}
             />
-          }
-        />
-
-        <TouchableOpacity onPress={() => navigation.navigate('forgotPassword')}>
-          <Text style={styles.forgot}>Quên mật khẩu?</Text>
-        </TouchableOpacity>
-        <PrimaryButton title="Đăng nhập" onPress={formik.submitForm} />
-      </View>
-
+            <Icon
+              name="facebook"
+              type="font-awesome"
+              color="#4267B2"
+              containerStyle={styles.icon}
+            />
+            <Icon
+              name="phone"
+              type="font-awesome"
+              color={COLORS.warning}
+              containerStyle={styles.icon}
+            />
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
       <View style={[styles.container1]}>
         <Text style={[FONTS.Medium]}>Chưa có tài khoản? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
@@ -150,27 +195,14 @@ export const styles = StyleSheet.create({
   container: {
     ...STYLES.container,
     alignItems: 'stretch',
-  },
-  btnContainer: {
-    width: '100%',
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 25,
   },
   container1: {
-    marginBottom: 30,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  loginBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    backgroundColor: COLORS.primary,
-    borderRadius: 5,
-    padding: 15,
+    flex: 1,
   },
   forgot: {
     color: COLORS.primary,
@@ -178,16 +210,20 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'flex-end',
   },
-  background: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   form: {
     paddingHorizontal: 30,
     paddingTop: 15,
+  },
+  icon: {
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    backgroundColor: '#FFF',
+    elevation: 15,
+    shadowColor: COLORS.primary,
+    marginHorizontal: 8,
+  },
+  subTitle: {
+    color: 'rgba(0,0,0,0.5)',
+    marginBottom: 10,
   },
 });
