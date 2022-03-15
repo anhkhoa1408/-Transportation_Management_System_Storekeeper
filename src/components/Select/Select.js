@@ -11,6 +11,7 @@ const Select = props => {
       {props.title && <Text style={styles.texttitle}>{props.title}</Text>}
       <View style={styles.inputView}>
         <Picker
+          mode="dropdown"
           style={{ flex: 1, fontSize: 17, color: '#000' }}
           dropdownIconColor={primary}
           selectedValue={selectedItem}
