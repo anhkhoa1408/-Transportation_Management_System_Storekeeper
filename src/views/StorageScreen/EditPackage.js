@@ -1,11 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  KeyboardAvoidingView,
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { Text, Icon } from 'react-native-elements';
 import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
@@ -28,6 +22,25 @@ const EditPackage = ({ navigation, route }) => {
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(null);
   const [selected, setSelected] = useState(item.package_type);
+
+  const [data, setData] = useState([
+    {
+      label: 'Thông thường',
+      value: 'normal',
+    },
+    {
+      label: 'Dễ vỡ',
+      value: 'fragile',
+    },
+    {
+      label: 'Dễ cháy nổ',
+      value: 'explosive',
+    },
+    {
+      label: 'Có mùi',
+      value: 'smell',
+    },
+  ]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -89,25 +102,6 @@ const EditPackage = ({ navigation, route }) => {
       });
   };
 
-  const [data, setData] = useState([
-    {
-      label: 'Thông thường',
-      value: 'normal',
-    },
-    {
-      label: 'Dễ vỡ',
-      value: 'fragile',
-    },
-    {
-      label: 'Dễ cháy nổ',
-      value: 'explosive',
-    },
-    {
-      label: 'Có mùi',
-      value: 'smell',
-    },
-  ]);
-
   return (
     <SafeAreaView style={style.container}>
       {loading}
@@ -137,7 +131,7 @@ const EditPackage = ({ navigation, route }) => {
         <ScrollView contentContainerStyle={style.form}>
           <TextField
             editable={false}
-            title="Mã barcode"
+            title="Mã QR"
             disabled
             value={formik.values.id}
           />

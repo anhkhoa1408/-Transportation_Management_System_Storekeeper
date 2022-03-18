@@ -1,36 +1,37 @@
+import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
   Dimensions,
   KeyboardAvoidingView,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
 } from 'react-native';
-import { Text, Icon } from 'react-native-elements';
-import { container } from '../../styles/layoutStyle';
-import Header from '../../components/Header';
-import { COLORS, FONTS } from '../../styles';
-import { InfoField } from '../../components/InfoField';
-import TextField from '../../components/TextField/TextField';
-import Barcode from 'react-native-barcode-builder';
-import { convertPackageType } from '../../utils/convertPackageType';
+import { Icon, Text } from 'react-native-elements';
+import QRCode from 'react-native-qrcode-svg';
+import * as Bonk from 'yup';
 import packageApi from '../../api/packageApi';
 import storageApi from '../../api/storageApi';
-import { useFormik } from 'formik';
-import * as Bonk from 'yup';
-import ModalMess from './../../components/ModalMess';
-import Loading from './../../components/Loading';
-import PrimaryButton from './../../components/CustomButton/PrimaryButton';
+import Header from '../../components/Header';
+import { InfoField } from '../../components/InfoField';
+import TextField from '../../components/TextField/TextField';
+import { COLORS } from '../../styles';
+import { container } from '../../styles/layoutStyle';
+import { convertPackageType } from '../../utils/convertPackageType';
+import PrimaryButton from '../../components/CustomButton/PrimaryButton';
+import Loading from '../../components/Loading';
+import ModalMess from '../../components/ModalMess';
+import { Tab, TabView } from 'react-native-elements';
+import PackageInfo from './PackageInfo/PackageInfo';
 
-const width = Dimensions.get('screen').width;
-
-const BarcodeDetail = ({ navigation, route }) => {
-  const { barcode, type } = route?.params;
+const QRDetail = ({ navigation, route }) => {
+  const { qr, type } = route?.params;
   const [data, setData] = useState([]);
   const [remainingPackage, setRemainingPackage] = useState(0);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(null);
+  const [index, setIndex] = useState(0);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -53,11 +54,17 @@ const BarcodeDetail = ({ navigation, route }) => {
   });
 
   const handleUpdate = values => {
+    console.log(
+      values,
+      qr,
+      data.quantity - remainingPackage + Number.parseInt(values.packages),
+    );
+
     setLoading(<Loading />);
     if (type === 'import') {
       storageApi
         .updateImportQuantityByPackage({
-          packageId: barcode,
+          packageId: qr,
           quantity:
             data.quantity - remainingPackage + Number.parseInt(values.packages),
         })
@@ -81,7 +88,7 @@ const BarcodeDetail = ({ navigation, route }) => {
     } else if (type === 'export') {
       storageApi
         .updateExportQuantityByPackage({
-          packageId: barcode,
+          packageId: qr,
           quantity:
             data.quantity - remainingPackage + Number.parseInt(values.packages),
         })
@@ -106,10 +113,10 @@ const BarcodeDetail = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    if (barcode) {
+    if (qr) {
       setLoading(<Loading />);
       packageApi
-        .getScannedPackage(barcode, {
+        .getScannedPackage(qr, {
           type: type === 'import' ? 0 : 1,
         })
         .then(response => {
@@ -142,86 +149,63 @@ const BarcodeDetail = ({ navigation, route }) => {
         leftElement={
           <Icon name="west" size={30} onPress={() => navigation.goBack()} />
         }
-        headerText={'Thông tin barcode'}
+        headerText={'Thông tin mã QR'}
       />
-      <View
-        style={[
-          {
-            alignSelf: 'center',
-          },
-        ]}>
-        <Text
-          style={{
-            alignSelf: 'center',
+
+      <View style={{ paddingHorizontal: 15, height: 62 }}>
+        <Tab
+          value={index}
+          onChange={e => setIndex(e)}
+          indicatorStyle={{
+            height: 0,
           }}>
-          <Barcode
-            width={1}
-            text={barcode}
-            value={barcode}
-            format="CODE128"
-            onError={error => console.log(error)}
+          <Tab.Item
+            title="QR code"
+            titleStyle={{ fontSize: 12, color: COLORS.primary }}
+            containerStyle={{
+              backgroundColor: COLORS.gray,
+              borderTopLeftRadius: 20,
+              borderBottomLeftRadius: 20,
+            }}
+            buttonStyle={[
+              { padding: 3 },
+              index === 0 ? [style.activeTab] : [style.inactiveTab],
+            ]}
           />
-        </Text>
+          <Tab.Item
+            title="Kiện hàng"
+            titleStyle={{ fontSize: 12, color: COLORS.primary }}
+            containerStyle={[
+              {
+                backgroundColor: COLORS.gray,
+                borderTopRightRadius: 20,
+                borderBottomRightRadius: 20,
+              },
+            ]}
+            buttonStyle={[
+              { padding: 3 },
+              index === 1 ? [style.activeTab] : [style.inactiveTab],
+            ]}
+          />
+        </Tab>
       </View>
-      <KeyboardAvoidingView
-        enabled
-        behavior="padding"
-        keyboardVerticalOffset={0}
-        style={{ flex: 1 }}>
-        <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20 }}
-          style={style.infoContainer}>
-          <Text style={[{ fontSize: 20, marginBottom: 10 }]}>
-            Thông tin kiện hàng
-          </Text>
-          <View style={[style.infoPackages]}>
-            <View style={style.info}>
-              <InfoField
-                style={{ flex: 1 }}
-                title="Tên"
-                content={!data.name && 'Không có'}
-              />
-              <InfoField
-                style={{ flex: 1 }}
-                title="Trọng lượng"
-                content={data.weight + ' kg'}
-              />
-            </View>
-            <View style={style.info}>
-              <InfoField
-                style={{ flex: 1 }}
-                title="Số lượng còn lại"
-                content={remainingPackage + ' kiện'}
-              />
-              <InfoField
-                style={{ flex: 1 }}
-                title="Thể tích"
-                content={`${data?.size?.len}m x ${data?.size?.width}m x ${data?.size?.height}m`}
-              />
-            </View>
-            <View style={style.info}>
-              <InfoField
-                style={{ flex: 1 }}
-                title="Loại"
-                content={convertPackageType(data?.package_type?.package_type)}
-              />
-            </View>
+
+      <TabView value={index} onChange={setIndex} animationType="spring">
+        <TabView.Item style={{ width: '100%' }}>
+          <View
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <QRCode size={250} value={qr} />
           </View>
-          <View style={{ marginTop: 20 }}>
-            <TextField
-              title={`Số lượng ${type === 'import' ? 'nhập' : 'xuất'}`}
-              value={formik.values.packages.toString()}
-              onChangeText={text => formik.setFieldValue('packages', text)}
-              onBlur={() => formik.setFieldTouched('packages')}
-              keyboardType="numeric"
-              afterText="kiện"
-              error={formik.touched.packages && formik.errors.packages}
-              errorMessage={formik.errors.packages}
-            />
-          </View>
-          <PrimaryButton title="Thực hiện" onPress={formik.submitForm} />
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </TabView.Item>
+        <TabView.Item style={{ width: '100%' }}>
+          <PackageInfo
+            data={data}
+            formik={formik}
+            remainingPackage={remainingPackage}
+            type={type}
+          />
+        </TabView.Item>
+      </TabView>
     </SafeAreaView>
   );
 };
@@ -248,19 +232,23 @@ const style = StyleSheet.create({
     padding: 10,
     marginVertical: 20,
   },
-  barcode: {
-    transform: [
-      {
-        translateX: 0.15 * width,
-      },
-    ],
-  },
   infoPackages: {
     backgroundColor: COLORS.gray,
     borderRadius: 12,
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
+  activeTab: {
+    backgroundColor: COLORS.white,
+    margin: 8,
+    marginHorizontal: 5,
+    borderRadius: 16,
+  },
+  inactiveTab: {
+    backgroundColor: '#F1F1FA',
+    margin: 8,
+    marginHorizontal: 5,
+  },
 });
 
-export default BarcodeDetail;
+export default QRDetail;
