@@ -24,8 +24,8 @@ export default function HistoryScreen({ navigation }) {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       Promise.all([
-        storageApi.importList({ page: 0 }),
-        storageApi.exportList({ page: 0 }),
+        storageApi.importList({ _start: 0 }),
+        storageApi.exportList({ _start: 0 }),
       ])
         .then(result => {
           setLoading(null);
@@ -53,7 +53,7 @@ export default function HistoryScreen({ navigation }) {
   useEffect(() => {
     if (pageExport) {
       storageApi
-        .exportList({ page: pageExport })
+        .exportList({ _start: pageExport })
         .then(result => {
           setLoading(null);
           setExports([...exports, ...result]);
@@ -68,7 +68,7 @@ export default function HistoryScreen({ navigation }) {
   useEffect(() => {
     if (pageImport) {
       storageApi
-        .importList({ page: pageImport })
+        .importList({ _start: pageImport })
         .then(result => {
           setLoading(null);
           setImports([...imports, ...result]);
