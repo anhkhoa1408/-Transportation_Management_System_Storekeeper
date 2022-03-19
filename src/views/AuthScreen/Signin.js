@@ -20,12 +20,13 @@ import { Icon, Image, Text, SocialIcon } from 'react-native-elements';
 import PrimaryButton from '../../components/CustomButton/PrimaryButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-const SignIn = ({ navigation }) => {
+const SignIn = ({ navigation, route }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(null);
   const [alert, setAlert] = useState(null);
   const [showPass, setShowPass] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   const dispatch = useDispatch();
   const formik = useFormik({
@@ -45,26 +46,56 @@ const SignIn = ({ navigation }) => {
     },
   });
 
-  const handleSubmit = values => {
-    Keyboard.dismiss();
+  React.useEffect(() => {
+    if (route.params?.token) {
+      handleSubmit('phone', route.params?.token);
+    }
+  }, [route.params?.token]);
+
+  const handleSubmit = (values, token) => {
+    setDisabled(true);
     setLoading(<Loading />);
-    authApi
-      .login({
-        identifier: values.email,
-        password: values.password,
-      })
+    let handler;
+    switch (values) {
+      case 'phone':
+        handler = authApi.loginWithProvider(token);
+        break;
+      default:
+        handler = authApi.login({
+          identifier: values.email,
+          password: values.password,
+        });
+        break;
+    }
+    Keyboard.dismiss();
+    handler
       .then(data => {
         dispatch(saveInfo(data));
-        socket.connect();
+        if (socket.disconnected) socket.connect();
         syncToken();
         setLoading(null);
       })
       .catch(err => {
-        setAlert({
-          type: 'warning',
-          message: 'Tài khoản hoặc mật khẩu không đúng!',
-        });
+        try {
+          const message = err.response.data.data[0].messages[0].id;
+          if (message === 'Auth.form.error.email.taken')
+            setAlert({
+              type: 'warning',
+              message: 'Email đã được sử dụng!',
+            });
+          else
+            setAlert({
+              type: 'warning',
+              message: 'Tài khoản hoặc mật khẩu không đúng!',
+            });
+        } catch (error) {
+          setAlert({
+            type: 'warning',
+            message: 'Xác thực thất bại!',
+          });
+        }
         setLoading(null);
+        setDisabled(false);
       });
   };
 
@@ -134,7 +165,9 @@ const SignIn = ({ navigation }) => {
           />
 
           <TouchableOpacity
-            onPress={() => navigation.navigate('forgotPassword')}>
+            onPress={() =>
+              navigation.navigate('forgotPassword', { type: 'forgot' })
+            }>
             <Text style={styles.forgot}>Quên mật khẩu?</Text>
           </TouchableOpacity>
           <PrimaryButton title="Đăng nhập" onPress={formik.submitForm} />
@@ -156,24 +189,17 @@ const SignIn = ({ navigation }) => {
               alignItems: 'center',
               flex: 1,
             }}>
-            <Icon
-              name="google"
-              type="font-awesome"
-              color="#4285F4"
-              containerStyle={styles.icon}
-            />
-            <Icon
-              name="facebook"
-              type="font-awesome"
-              color="#4267B2"
-              containerStyle={styles.icon}
-            />
-            <Icon
-              name="phone"
-              type="font-awesome"
-              color={COLORS.warning}
-              containerStyle={styles.icon}
-            />
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('forgotPassword', { type: 'signin' })
+              }>
+              <Icon
+                name="phone"
+                type="font-awesome"
+                color={COLORS.warning}
+                containerStyle={styles.icon}
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAwareScrollView>
