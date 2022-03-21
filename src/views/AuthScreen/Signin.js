@@ -83,7 +83,12 @@ const SignIn = ({ navigation, route }) => {
               type: 'warning',
               message: 'Email đã được sử dụng!',
             });
-          else
+          else if (message === 'unauthorized') {
+            setAlert({
+              type: 'warning',
+              message: 'Xác thực thất bại!',
+            });
+          } else
             setAlert({
               type: 'warning',
               message: 'Tài khoản hoặc mật khẩu không đúng!',

@@ -74,7 +74,7 @@ const ForgotPass = ({ navigation, route }) => {
           marginBottom: 20,
         }}
       />
-      <View style={{ paddingHorizontal: 15 }}>
+      <View style={{ width: '100%' }}>
         <Text style={styles.title}>{meta?.title}</Text>
         <Text
           style={{
