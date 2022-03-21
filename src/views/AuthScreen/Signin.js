@@ -71,8 +71,6 @@ const SignIn = ({ navigation, route }) => {
     handler
       .then(data => {
         dispatch(saveInfo(data));
-        if (socket.disconnected) socket.connect();
-        syncToken();
         setLoading(null);
       })
       .catch(err => {
