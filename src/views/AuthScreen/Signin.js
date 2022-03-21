@@ -173,7 +173,11 @@ const SignIn = ({ navigation, route }) => {
             }>
             <Text style={styles.forgot}>Quên mật khẩu?</Text>
           </TouchableOpacity>
-          <PrimaryButton title="Đăng nhập" onPress={formik.submitForm} />
+          <PrimaryButton
+            title="Đăng nhập"
+            onPress={formik.submitForm}
+            disabled={disabled}
+          />
         </View>
 
         <View
