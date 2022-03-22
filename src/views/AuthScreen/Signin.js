@@ -71,8 +71,6 @@ const SignIn = ({ navigation, route }) => {
     handler
       .then(data => {
         dispatch(saveInfo(data));
-        if (socket.disconnected) socket.connect();
-        syncToken();
         setLoading(null);
       })
       .catch(err => {
@@ -83,7 +81,12 @@ const SignIn = ({ navigation, route }) => {
               type: 'warning',
               message: 'Email đã được sử dụng!',
             });
-          else
+          else if (message === 'unauthorized') {
+            setAlert({
+              type: 'warning',
+              message: 'Xác thực thất bại!',
+            });
+          } else
             setAlert({
               type: 'warning',
               message: 'Tài khoản hoặc mật khẩu không đúng!',
@@ -170,7 +173,11 @@ const SignIn = ({ navigation, route }) => {
             }>
             <Text style={styles.forgot}>Quên mật khẩu?</Text>
           </TouchableOpacity>
-          <PrimaryButton title="Đăng nhập" onPress={formik.submitForm} />
+          <PrimaryButton
+            title="Đăng nhập"
+            onPress={formik.submitForm}
+            disabled={disabled}
+          />
         </View>
 
         <View
