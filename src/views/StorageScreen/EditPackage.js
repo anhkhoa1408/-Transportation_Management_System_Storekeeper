@@ -49,7 +49,7 @@ const EditPackage = ({ navigation, route }) => {
       len: item.size.len,
       width: item.size.width,
       height: item.size.height,
-      importedQuantity: item.quantity,
+      importedQuantity: item.importedQuantity,
     },
     validationSchema: Bonk.object({
       position: Bonk.string().required('Thông tin bắt buộc'),
