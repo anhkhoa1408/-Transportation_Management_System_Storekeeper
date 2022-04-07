@@ -1,19 +1,18 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  View,
-  StyleSheet,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import { Text, Icon, Divider, ListItem, CheckBox } from 'react-native-elements';
-import { container } from '../../styles/layoutStyle';
-import Header from '../../components/Header';
-import { FONTS, COLORS } from '../../styles';
-import { InfoField } from '../../components/InfoField';
-import ButtonSwitch from '../../components/ButtonSwitch';
-import BarcodeScanner from 'react-native-scan-barcode';
+import { CheckBox, Divider, Icon, ListItem, Text } from 'react-native-elements';
 import shipmentApi from '../../api/shipmentAPI';
+import ButtonSwitch from '../../components/ButtonSwitch';
+import Header from '../../components/Header';
+import { InfoField } from '../../components/InfoField';
+import { COLORS, FONTS } from '../../styles';
+import { container } from '../../styles/layoutStyle';
 
 const VehicleDetail = ({ navigation, route }) => {
   const { shipmentId, licence, type } = route.params;
@@ -90,7 +89,7 @@ const VehicleDetail = ({ navigation, route }) => {
               name="camera"
               type="font-awesome"
               color="#FFF"
-              onPress={() => navigation.navigate('BarcodeScan', route.params)}
+              onPress={() => navigation.navigate('QRScan', route.params)}
             />
           </View>
         </View>
@@ -235,7 +234,7 @@ const style = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: COLORS.white,
     shadowColor: COLORS.primary,
-    elevation: 18,
+    elevation: 10,
   },
   smolText: {
     fontSize: 12,

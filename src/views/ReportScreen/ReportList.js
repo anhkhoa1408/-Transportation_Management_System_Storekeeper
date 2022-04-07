@@ -18,7 +18,7 @@ import moment from 'moment';
 import { simplifyString } from './../../utils/simplifyString';
 
 const ReportList = ({ navigation }) => {
-  const [page, setPage] = useState(0);
+  const [_start, setStart] = useState(0);
   const [data, setData] = useState([]);
 
   const [check, setCheck] = useState(
@@ -77,16 +77,16 @@ const ReportList = ({ navigation }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       storageApi
-        .reportList({ page: 0 })
+        .reportList({ _start: 0 })
         .then(response => {
           setData(response);
         })
         .catch(error => console.log(error));
     });
 
-    if (page) {
+    if (_start) {
       storageApi
-        .reportList({ page: page })
+        .reportList({ _start: _start })
         .then(response => {
           setData([...data, ...response]);
         })
@@ -94,11 +94,11 @@ const ReportList = ({ navigation }) => {
     }
 
     return unsubscribe;
-  }, [page]);
+  }, [_start]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-      setPage(0);
+      setStart(0);
     });
 
     return unsubscribe;
@@ -159,7 +159,10 @@ const ReportList = ({ navigation }) => {
         ListFooterComponent={
           data.length > 5 && (
             <View style={{ padding: 20 }}>
-              <PillButton onPress={() => setPage(page + 1)} title="Xem thêm" />
+              <PillButton
+                onPress={() => setStart(_start + 1)}
+                title="Xem thêm"
+              />
             </View>
           )
         }
