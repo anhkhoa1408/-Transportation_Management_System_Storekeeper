@@ -23,18 +23,21 @@ const VehicleList = ({ navigation, route }) => {
   const { type } = route.params;
 
   React.useEffect(() => {
-    const getShipment =
-      type === 'import' ? shipmentApi.import : shipmentApi.export;
-    getShipment()
-      .then(data => {
-        setData(data);
-        setLoading(null);
-      })
-      .catch(err => {
-        setLoading(null);
-        console.log(err);
-      });
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      const getShipment =
+        type === 'import' ? shipmentApi.import : shipmentApi.export;
+      getShipment()
+        .then(data => {
+          setData(data);
+          setLoading(null);
+        })
+        .catch(err => {
+          setLoading(null);
+          console.log(err);
+        });
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const ref = useRef([]);
 
