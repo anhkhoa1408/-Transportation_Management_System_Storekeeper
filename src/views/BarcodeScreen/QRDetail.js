@@ -24,11 +24,13 @@ import Loading from '../../components/Loading';
 import ModalMess from '../../components/ModalMess';
 import { Tab, TabView } from 'react-native-elements';
 import PackageInfo from './PackageInfo/PackageInfo';
+import shipmentApi from '../../api/shipmentAPI';
 
 const QRDetail = ({ navigation, route }) => {
-  const { qr, type } = route?.params;
+  const { qr, type, shipmentData } = route?.params;
   const [data, setData] = useState([]);
   const [remainingPackage, setRemainingPackage] = useState(0);
+  const [shipmentItem, setShipmentItem] = useState(null);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(null);
   const [index, setIndex] = useState(0);
@@ -54,19 +56,17 @@ const QRDetail = ({ navigation, route }) => {
   });
 
   const handleUpdate = values => {
-    console.log(
-      values,
-      qr,
-      data.quantity - remainingPackage + Number.parseInt(values.packages),
-    );
-
     setLoading(<Loading />);
+    let updateQuantity =
+      shipmentItem.quantity -
+      remainingPackage +
+      Number.parseInt(values.packages);
     if (type === 'import') {
       storageApi
         .updateImportQuantityByPackage({
           packageId: qr,
-          quantity:
-            data.quantity - remainingPackage + Number.parseInt(values.packages),
+          quantity: updateQuantity,
+          shipmentItem: shipmentItem.id,
         })
         .then(response => {
           setRemainingPackage(
@@ -89,8 +89,8 @@ const QRDetail = ({ navigation, route }) => {
       storageApi
         .updateExportQuantityByPackage({
           packageId: qr,
-          quantity:
-            data.quantity - remainingPackage + Number.parseInt(values.packages),
+          quantity: updateQuantity,
+          shipmentItem: shipmentItem.id,
         })
         .then(response => {
           setRemainingPackage(
@@ -113,22 +113,23 @@ const QRDetail = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    if (qr) {
-      setLoading(<Loading />);
-      packageApi
-        .getScannedPackage(qr, {
-          type: type === 'import' ? 0 : 1,
-        })
+    if (shipmentData && qr) {
+      let data = shipmentData.packages.find(item => item.id === qr);
+      let shipPack = shipmentData.shipment_items.find(
+        item => item.package === qr,
+      );
+      setData(data);
+      shipmentApi
+        .shipmentItemDetail(shipPack.id)
         .then(response => {
-          setLoading(null);
-          setData(response);
-          setRemainingPackage(response.remainingPackage);
+          console.log(shipmentItem);
+          setShipmentItem(response);
+          setRemainingPackage(response.quantity - response.received);
         })
-        .catch(error => {
-          setLoading(null);
+        .catch(err => {
           setAlert({
             type: 'danger',
-            message: 'Có lỗi xảy ra, vui lòng thử lại sau',
+            message: 'Lấy thông tin kiện hàng thất bại',
           });
         });
     }
