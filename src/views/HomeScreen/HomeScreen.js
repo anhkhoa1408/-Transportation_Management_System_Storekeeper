@@ -8,15 +8,17 @@ import HeaderAvatar from '../../components/HeaderAvatar';
 import InfoCard from './InfoCard';
 // Import Function
 import { connect } from 'react-redux';
+import { getAvatarFromUser, getNameFromUser } from '../../utils/avatarUltis';
 import homeAPI from '../../api/homeAPI';
 // Import Asset
 import styles, { STYLES, COLORS, FONTS } from '../../styles';
 import banner from './../../assets/images/delivery.jpg';
 import { container, shadowCard } from '../../styles/layoutStyle';
 import { danger, primary, success } from '../../styles/color';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-function HomeScreen({ navigation, ...props }) {
-  const BadgedIcon = withBadge(10)(Icon);
+function HomeScreen({ navigation, userInfo, noties, ...props }) {
+  const [badge, setBadge] = useState(null);
   const [listData, setListData] = useState([
     {
       icon: 'add',
@@ -37,11 +39,21 @@ function HomeScreen({ navigation, ...props }) {
     },
   ]);
 
-  const [user, setUser] = useState({
-    name: '',
-    avatar:
-      'https://res.cloudinary.com/dfnoohdaw/image/upload/v1638692549/avatar_default_de42ce8b3d.png',
-  });
+  useEffect(() => {
+    setBadge(Badge(Object.keys(noties).length));
+  }, [noties]);
+
+  const Badge = totalNoties => {
+    const BadgedIcon = withBadge(totalNoties)(Icon);
+    return (
+      <BadgedIcon
+        name="notifications"
+        color={COLORS.primary}
+        size={30}
+        onPress={() => navigation.navigate('Notification')}
+      />
+    );
+  };
 
   const [status, setStatus] = useState({
     storage_status: '',
@@ -66,18 +78,11 @@ function HomeScreen({ navigation, ...props }) {
       {/* {!listData.length && <Loading />} */}
       <View style={homeStyle.container}>
         <Header
-          leftElement={
-            <BadgedIcon
-              name="notifications"
-              color={COLORS.primary}
-              size={30}
-              onPress={() => navigation.navigate('Notification')}
-            />
-          }
-          headerText={'Xin chào ' + user.name}
+          leftElement={badge}
+          headerText={'Xin chào ' + getNameFromUser(userInfo?.user)}
           rightElement={
             <HeaderAvatar
-              url={user.avatar}
+              url={getAvatarFromUser(userInfo?.user)}
               onPressAction={() => navigation.navigate('EditProfile')}
             />
           }
@@ -94,58 +99,61 @@ function HomeScreen({ navigation, ...props }) {
         </View>
 
         {/* Info Cards Section */}
-        <View style={homeStyle.listInfo}>
-          <FlatList
-            contentContainerStyle={{ paddingVertical: 15 }}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            data={listData}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-          />
-        </View>
+        <KeyboardAwareScrollView enableOnAndroid enableAutomaticScroll>
+          <View style={homeStyle.listInfo}>
+            <FlatList
+              contentContainerStyle={{ paddingVertical: 15 }}
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              data={listData}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+            />
+          </View>
 
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}>
-          <Card containerStyle={homeStyle.cardContainer}>
-            <Card.Title>Tình trạng kho</Card.Title>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}>
-              <Icon
-                name="store"
-                color={
-                  status.storage_status === 'Đang hoạt động'
-                    ? COLORS.primary
-                    : COLORS.warning
-                }
-                size={22}
-                reverse
-              />
-              <Text style={FONTS.BigBold}>{status.storage_status}</Text>
-            </View>
-          </Card>
-          <Card containerStyle={homeStyle.cardContainer}>
-            <Card.Title>Đơn hàng cần nhập</Card.Title>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}>
-              <Icon name="inventory" color={success} size={22} reverse />
-              <Text style={[FONTS.BigBold, { fontSize: 20 }]}>
-                {status.total_packages}
-              </Text>
-            </View>
-          </Card>
-        </View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: 25,
+            }}>
+            <Card containerStyle={homeStyle.cardContainer}>
+              <Card.Title>Tình trạng kho</Card.Title>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  name="store"
+                  color={
+                    status.storage_status === 'Đang hoạt động'
+                      ? COLORS.primary
+                      : COLORS.warning
+                  }
+                  size={22}
+                  reverse
+                />
+                <Text style={FONTS.BigBold}>{status.storage_status}</Text>
+              </View>
+            </Card>
+            <Card containerStyle={homeStyle.cardContainer}>
+              <Card.Title>Đơn hàng cần nhập</Card.Title>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}>
+                <Icon name="inventory" color={success} size={22} reverse />
+                <Text style={[FONTS.BigBold, { fontSize: 20 }]}>
+                  {status.total_packages}
+                </Text>
+              </View>
+            </Card>
+          </View>
+        </KeyboardAwareScrollView>
       </View>
     </>
   );
@@ -177,6 +185,7 @@ const homeStyle = StyleSheet.create({
 
 const mapStateToProps = state => ({
   userInfo: state.userInfo,
+  noties: state.notification,
 });
 
 export default connect(mapStateToProps)(HomeScreen);
