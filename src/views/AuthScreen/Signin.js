@@ -70,6 +70,7 @@ const SignIn = ({ navigation, route }) => {
     Keyboard.dismiss();
     handler
       .then(data => {
+        if (data?.user?.role?.name !== 'Stocker') throw 'Role mismatch';
         dispatch(saveInfo(data));
         setLoading(null);
       })

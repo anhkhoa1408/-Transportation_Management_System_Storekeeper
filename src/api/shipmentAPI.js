@@ -14,7 +14,10 @@ class ShipmentAPI {
     const url = MAIN_URL.concat('/shipments/vehicle-detail/' + id);
     return axiosClient.get(url);
   };
-  
+  finishShipment = id => {
+    const url = MAIN_URL.concat('/shipments/finish/' + id);
+    return axiosClient.put(url);
+  };
 }
 const shipmentApi = new ShipmentAPI();
 export default shipmentApi;

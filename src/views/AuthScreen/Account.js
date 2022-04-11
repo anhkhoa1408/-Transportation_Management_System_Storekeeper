@@ -13,6 +13,7 @@ import { COLORS } from '../../styles';
 import { useDispatch } from 'react-redux';
 import { success, danger } from '../../styles/color';
 import { connect } from 'react-redux';
+import { getAvatarFromUser } from '../../utils/avatarUltis';
 
 const Account = ({ navigation, userInfo }) => {
   const dispatch = useDispatch();
@@ -197,13 +198,13 @@ const Account = ({ navigation, userInfo }) => {
           rounded
           size="large"
           source={{
-            uri: userInfo?.user?.avatar?.url,
+            uri: getAvatarFromUser(userInfo?.user),
           }}
         />
         <View style={{ marginLeft: 20, flex: 1 }}>
           <Text style={styles.smallText}>Nhân viên</Text>
           <Text style={styles.bigText}>{userInfo?.user?.name}</Text>
-          <Text style={styles.statusText}>Đang làm việc</Text>
+          {/* <Text style={styles.statusText}>Đang làm việc</Text> */}
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
           <Icon name="edit" size={28} color={COLORS.primary} />

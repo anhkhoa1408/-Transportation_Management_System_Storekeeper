@@ -23,9 +23,25 @@ const VehicleDetail = ({ navigation, route }) => {
   React.useEffect(() => {
     shipmentApi
       .shipmentDetail(shipmentId)
-      .then(data => setData(data))
+      .then(data => {
+        data.shipment_items.map(
+          item =>
+            (data.packages.find(
+              _package => _package.id === item.package,
+            ).received = item.quantity),
+        );
+        data.packages.filter(item => item.received);
+        setData(data);
+      })
       .catch(err => console.log(err));
   }, []);
+
+  const finishShipment = () => {
+    shipmentApi
+      .finishShipment(shipmentId)
+      .then(data => navigation.goBack())
+      .catch(err => console.log(err));
+  };
 
   return (
     <SafeAreaView style={style.container}>
@@ -39,7 +55,7 @@ const VehicleDetail = ({ navigation, route }) => {
             name="check"
             size={30}
             color={COLORS.primary}
-            onPress={() => navigation.goBack()}
+            onPress={() => finishShipment()}
           />
         }
       />
@@ -144,6 +160,12 @@ const VehicleDetail = ({ navigation, route }) => {
                         Số lượng:{' '}
                         <Text style={{ ...style.info }}>{item.quantity}</Text>
                       </Text>
+                      {item.received && (
+                        <Text style={{ ...FONTS.Medium }}>
+                          Trong xe:{' '}
+                          <Text style={{ ...style.info }}>{item.received}</Text>
+                        </Text>
+                      )}
                       <Text style={{ ...FONTS.Medium }}>
                         Địa điểm hiện tại:{' '}
                         <Text style={{ ...style.info }}>{item.position}</Text>
