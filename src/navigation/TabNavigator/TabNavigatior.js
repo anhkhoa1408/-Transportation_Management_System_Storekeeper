@@ -171,7 +171,7 @@ const style = StyleSheet.create({
     height: 90,
     marginHorizontal: 20,
     bottom: 15,
-    borderRadius: 20,
+    borderRadius: 10,
     shadowColor: COLORS.primary,
     elevation: 10,
   },

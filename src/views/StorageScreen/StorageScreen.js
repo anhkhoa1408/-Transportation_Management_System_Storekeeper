@@ -10,11 +10,12 @@ import { Text, ListItem, Icon } from 'react-native-elements';
 import CustomSearch from '../../components/CustomSearch/CustomSearch';
 import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
-import { COLORS } from '../../styles';
+import { COLORS, FONTS } from '../../styles';
 import * as Animatable from 'react-native-animatable';
 import PillButton from './../../components/CustomButton/PillButton';
 import PrimaryButton from './../../components/CustomButton/PrimaryButton';
 import packageApi from '../../api/packageApi';
+import { simplifyString } from '../../utils/simplifyString';
 
 const StorageScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -75,7 +76,7 @@ const StorageScreen = ({ navigation }) => {
             />
           </View>
           <ListItem.Content>
-            <ListItem.Title>{item.package.id}</ListItem.Title>
+            <ListItem.Title style={FONTS.Smol}>ID: {simplifyString(item.package.id, 20)}</ListItem.Title>
             <ListItem.Subtitle>
               Vị tri: Khu {item.package.position}
             </ListItem.Subtitle>

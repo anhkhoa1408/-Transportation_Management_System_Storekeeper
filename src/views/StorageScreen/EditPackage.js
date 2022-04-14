@@ -58,7 +58,6 @@ const EditPackage = ({ navigation, route }) => {
       height: Bonk.string().required('Thông tin bắt buộc'),
       height: Bonk.string().required('Thông tin bắt buộc'),
       weight: Bonk.string().required('Thông tin bắt buộc'),
-      importedQuantity: Bonk.string().required('Thông tin bắt buộc'),
       quantity: Bonk.string().required('Thông tin bắt buộc'),
     }),
     validateOnBlur: true,
@@ -69,23 +68,16 @@ const EditPackage = ({ navigation, route }) => {
 
   const handleSubmit = values => {
     setLoading(<Loading />);
-    Promise.all([
-      !type &&
-        storageApi.editImport(values.importedId, {
-          quantity: values.importedQuantity,
-          packageId: values.id,
-        }),
-      packageApi.editPackage(values.id, {
+
+    packageApi
+      .editPackage(values.id, {
         ...values,
         package_type: selected,
-      }),
-    ])
+      })
       .then(response => {
         setItem({
-          importedQuantity: !type && response[0].quantity,
-          importedId: !type && response[0].id,
-          ...(!type && response[0].package),
-          ...response[1],
+          ...values,
+          ...response
         });
         setLoading(null);
         setAlert({
@@ -196,19 +188,11 @@ const EditPackage = ({ navigation, route }) => {
 
           {!type && (
             <TextField
-              title="Số lượng đã nhập"
+              disabled
+              title="Số lượng trong kho"
               afterText="kiện"
               keyboardType="numeric"
               value={formik.values.importedQuantity.toString()}
-              error={
-                formik.touched.importedQuantity &&
-                formik.errors.importedQuantity
-              }
-              errorMessage={formik.errors.importedQuantity}
-              onChangeText={text =>
-                formik.setFieldValue('importedQuantity', text)
-              }
-              onBlur={() => formik.setFieldTouched('importedQuantity')}
             />
           )}
 

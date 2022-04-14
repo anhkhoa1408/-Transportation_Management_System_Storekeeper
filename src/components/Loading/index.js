@@ -46,7 +46,7 @@ var styles = StyleSheet.create({
   },
   text: {
     color: COLORS.primary,
-    fontSize: 20,
+    fontSize: 18,
   },
 });
 
