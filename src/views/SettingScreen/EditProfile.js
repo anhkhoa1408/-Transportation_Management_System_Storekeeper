@@ -14,6 +14,9 @@ import TextField from '../../components/TextField';
 import PrimaryButton from '../../components/CustomButton/PrimaryButton';
 import Loading from '../../components/Loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { getAvatarFromUser } from '../../utils/avatarUltis';
+import { MAIN_URL } from '../../api/config';
 
 const EditProfile = ({ navigation }) => {
   const [data, setData] = useState({
@@ -21,13 +24,11 @@ const EditProfile = ({ navigation }) => {
     email: '',
     phone: '',
   });
-  const [avatar, setAvatar] = useState(
-    'https://res.cloudinary.com/dfnoohdaw/image/upload/v1638692549/avatar_default_de42ce8b3d.png',
-  );
+  const { userInfo } = store.getState();
+  const [avatar, setAvatar] = useState(getAvatarFromUser(userInfo?.user));
   const [dataChange, setDataChange] = useState(true);
   const [user, setUser] = useState({});
   const dispatch = useDispatch();
-  const { userInfo } = store.getState();
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const formik = useFormik({
@@ -54,8 +55,6 @@ const EditProfile = ({ navigation }) => {
         email: userInfo.user.email,
         phone: userInfo.user.phone,
       });
-      if ('avatar' in userInfo.user)
-        if ('url' in userInfo.user.avatar) setAvatar(userInfo.user.avatar.url);
       setDataChange(false);
       setDataChange(true);
     });
@@ -116,6 +115,35 @@ const EditProfile = ({ navigation }) => {
               underlayColor="#CCC"
               style={{ backgroundColor: COLORS.primary }}
               color={COLORS.white}
+              onPress={() =>
+                launchImageLibrary({
+                  mediaTypes: 'photo',
+                  quality: 1,
+                }).then(data => {
+                  if (data.assets && data.assets.length > 0) {
+                    setLoading(true);
+                    authApi
+                      .updateAvatar(data.assets[0])
+                      .then(response => {
+                        setLoading(false);
+                        dispatch(saveInfo({ user: response }));
+                        setAlert({
+                          type: 'success',
+                          message: 'Cập nhật ảnh đại diện thành công',
+                        });
+                        setAvatar(MAIN_URL + response.avatar.url)
+                      })
+                      .catch(err => {
+                        console.error(err);
+                        setLoading(false);
+                        setAlert({
+                          type: 'danger',
+                          message: 'Cập nhật ảnh đại diện thất bại',
+                        });
+                      });
+                  }
+                })
+              }
               size={35}
             />
           </Avatar>

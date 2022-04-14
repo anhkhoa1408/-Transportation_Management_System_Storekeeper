@@ -18,11 +18,11 @@ import { danger, primary, success } from '../../styles/color';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 
-const screenWidth = Dimensions.get("window").width
+const screenWidth = Dimensions.get('window').width;
 
 function HomeScreen({ navigation, userInfo, noties, ...props }) {
   const [badge, setBadge] = useState(null);
-  const ref = useRef(null)
+  const ref = useRef(null);
   const [listData, setListData] = useState([
     {
       icon: 'add',
@@ -54,9 +54,9 @@ function HomeScreen({ navigation, userInfo, noties, ...props }) {
       },
       to: {
         right: 0,
-      }
-    })
-  }, [])
+      },
+    });
+  }, []);
 
   const Badge = totalNoties => {
     const BadgedIcon = withBadge(totalNoties)(Icon);
@@ -119,16 +119,21 @@ function HomeScreen({ navigation, userInfo, noties, ...props }) {
           enableAutomaticScroll
           style={{ width: '100%' }}>
           <Animatable.View ref={ref} easing="ease" duration={500}>
-            <View style={homeStyle.listInfo}>
               <FlatList
-                contentContainerStyle={{ paddingVertical: 5 }}
+                contentContainerStyle={{
+                  display:'flex',
+                  flexDirection: 'row',
+                  width: '100%',
+                  justifyContent: 'space-evenly',
+                  alignItems: 'center'
+                }}
+                style={homeStyle.listInfo}
                 showsHorizontalScrollIndicator={false}
                 horizontal
                 data={listData}
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
               />
-            </View>
           </Animatable.View>
 
           <View
@@ -184,15 +189,9 @@ const homeStyle = StyleSheet.create({
     ...container,
   },
   listInfo: {
-    // width: ,
-    height: 108,
+    height: 100,
     backgroundColor: COLORS.gray,
     marginLeft: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
     borderTopLeftRadius: 50,
     borderBottomLeftRadius: 50,
     zIndex: 99,

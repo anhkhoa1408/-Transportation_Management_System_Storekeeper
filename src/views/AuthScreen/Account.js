@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Avatar, Icon, ListItem, Switch } from 'react-native-elements';
 import { container } from '../../styles/layoutStyle';
-import { COLORS } from '../../styles';
+import { COLORS, FONTS } from '../../styles';
 import { useDispatch } from 'react-redux';
 import { success, danger } from '../../styles/color';
 import { connect } from 'react-redux';
@@ -63,13 +63,13 @@ const Account = ({ navigation, userInfo }) => {
       state: toggle.nightMode,
       color: '#000',
     },
-    {
-      title: 'Thông báo',
-      icon: 'notifications',
-      name: 'notification',
-      state: toggle.notification,
-      color: COLORS.primary,
-    },
+    // {
+    //   title: 'Thông báo',
+    //   icon: 'notifications',
+    //   name: 'notification',
+    //   state: toggle.notification,
+    //   color: COLORS.primary,
+    // },
   ];
 
   const keyExtractor = (item, index) => index.toString();
@@ -87,23 +87,22 @@ const Account = ({ navigation, userInfo }) => {
           containerStyle={{
             width: '100%',
             display: 'flex',
-            paddingVertical: 20,
+            paddingVertical: 15,
           }}
           bottomDivider>
           <View
             style={{
               backgroundColor: item.color,
-              padding: 12,
-              borderRadius: 20,
+              padding: 10,
+              borderRadius: 10,
             }}>
             <Icon name={item.icon} color="#FFF" size={22} />
           </View>
           <ListItem.Title
-            style={{
+            style={[FONTS.Medium, {
               flex: 1,
-              fontSize: 18,
               marginLeft: 10,
-            }}>
+            }]}>
             {item.title}
           </ListItem.Title>
 
@@ -120,23 +119,22 @@ const Account = ({ navigation, userInfo }) => {
           containerStyle={{
             width: '100%',
             display: 'flex',
-            paddingVertical: 20,
+            paddingVertical: 15,
           }}
           bottomDivider>
           <View
             style={{
               backgroundColor: item.color,
-              padding: 12,
-              borderRadius: 20,
+              padding: 10,
+              borderRadius: 10,
             }}>
             <Icon name={item.icon} color="#FFF" size={22} />
           </View>
           <ListItem.Title
-            style={{
+             style={[FONTS.Medium, {
               flex: 1,
-              fontSize: 18,
               marginLeft: 10,
-            }}>
+            }]}>
             {item.title}
           </ListItem.Title>
 
@@ -196,7 +194,13 @@ const Account = ({ navigation, userInfo }) => {
       <View nestedScrollEnabled style={styles.header}>
         <Avatar
           rounded
-          size="large"
+          containerStyle={{
+            width: 55,
+            height: 55,
+          }}
+          avatarStyle={{
+            borderRadius: 30
+          }}
           source={{
             uri: getAvatarFromUser(userInfo?.user),
           }}
@@ -246,11 +250,11 @@ const styles = StyleSheet.create({
   },
   bigText: {
     fontWeight: 'bold',
-    fontSize: 25,
+    fontSize: 20,
     color: '#000',
   },
   smallText: {
-    fontSize: 15,
+    fontSize: 13,
     color: 'rgba(0, 0, 0, 0.5)',
   },
   editBtn: {
@@ -262,7 +266,7 @@ const styles = StyleSheet.create({
   statusText: {
     color: success,
     fontWeight: 'bold',
-    fontSize: 17,
+    fontSize: 16,
   },
   sectionText: {
     alignSelf: 'flex-start',

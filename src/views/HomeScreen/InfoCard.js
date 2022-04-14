@@ -37,11 +37,11 @@ const InfoCard = ({ item, navigation, type }) => {
     <Animatable.View ref={ref} duration={500} easing="ease">
       <TouchableWithoutFeedback onPress={() => handlePress(item.navigate)}>
         <ListItem containerStyle={styles.listItem}>
-          <Icon name={item.icon} reverseColor={COLORS.black} reverse color={COLORS.white} />
+          <Icon name={item.icon} reverseColor={COLORS.primary} reverse color={COLORS.white} />
           <Text
             style={{
               color: '#000',
-              fontSize: 14,
+              fontSize: 13,
             }}>
             {item.title}
           </Text>
@@ -59,19 +59,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'column',
     borderColor: '#000',
-    paddingVertical: 15,
-    marginHorizontal: 15,
     backgroundColor: 'transparent',
-  },
-  titleFont: {
-    fontSize: 16,
-    color: '#737373',
+    zIndex: -999
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
     backgroundColor: COLORS.white,
   },
 });

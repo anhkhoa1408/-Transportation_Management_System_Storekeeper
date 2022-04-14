@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
 import { COLORS, FONTS } from '../../../styles';
 import moment from 'moment';
+import { simplifyString } from '../../../utils/simplifyString';
 
 const Detail = ({ item, navigation }) => {
   return (
@@ -20,7 +21,7 @@ const Detail = ({ item, navigation }) => {
           />
         </View>
         <ListItem.Content>
-          <ListItem.Title style={FONTS.Medium}>ID: {item.id}</ListItem.Title>
+          <ListItem.Title style={FONTS.Smol}>ID: {simplifyString(item.id, 15)}</ListItem.Title>
           <ListItem.Subtitle>
             {moment(item.createdAt).format('DD-MM-YYYY HH:mm:ss')}
           </ListItem.Subtitle>

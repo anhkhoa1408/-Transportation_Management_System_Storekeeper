@@ -14,6 +14,17 @@ class AuthorApi {
     const url = MAIN_URL.concat(`/users/${id}`);
     return axiosClient.put(url, data);
   };
+  updateAvatar = async avatar => {
+    const url = MAIN_URL.concat('/users/avatar');
+
+    let formData = new FormData();
+    formData.append('avatar', {
+      uri: avatar.uri,
+      name: avatar.fileName,
+      type: 'multipart/form-data',
+    });
+    return axiosClient.put(url, formData);
+  };
   loginWithProvider = token => {
     const url = MAIN_URL.concat(`/auth/phone?code=${token}`);
     return axiosClient.get(url);
