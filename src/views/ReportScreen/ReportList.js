@@ -12,7 +12,7 @@ import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
 import { primary, danger } from '../../styles/color';
 import PillButton from '../../components/CustomButton/PillButton';
-import { COLORS } from '../../styles';
+import { COLORS, FONTS } from '../../styles';
 import storageApi from '../../api/storageApi';
 import moment from 'moment';
 import { simplifyString } from './../../utils/simplifyString';
@@ -55,7 +55,7 @@ const ReportList = ({ navigation }) => {
           />
         </View>
         <ListItem.Content>
-          <ListItem.Title>ID: {simplifyString(item.id, 20)}</ListItem.Title>
+          <ListItem.Title style={FONTS.Medium}>ID: {simplifyString(item.id, 20)}</ListItem.Title>
           <ListItem.Subtitle>
             Cập nhật: {moment(item.updatedAt).format('DD/MM/YYYY HH:mm')}
           </ListItem.Subtitle>

@@ -24,20 +24,19 @@ const HistoryDetail = ({ navigation, route }) => {
           disabled
           editable={false}
           title="Mã nhập xuất"
-          value={item.code}
+          value={item.id}
         />
         <TextField
           disabled
           editable={false}
           title="Người thực hiện"
-          value={item.store_manager.name}
+          value={item.store_manager?.name || ""}
         />
         <TextField
           disabled
           editable={false}
           keyboardType="numeric"
           title="Số lượng nhập xuất"
-          keyboardType="numeric"
           afterText="kiện"
           value={item.quantity.toString()}
         />
@@ -47,7 +46,6 @@ const HistoryDetail = ({ navigation, route }) => {
           editable={false}
           keyboardType="numeric"
           title="Mã kiện hàng"
-          keyboardType="numeric"
           value={item.package.id}
         />
         <TextField
@@ -55,7 +53,6 @@ const HistoryDetail = ({ navigation, route }) => {
           editable={false}
           keyboardType="numeric"
           title="Tên kiện hàng"
-          keyboardType="numeric"
           value={item.package.name}
         />
         <TextField
@@ -64,7 +61,6 @@ const HistoryDetail = ({ navigation, route }) => {
           keyboardType="numeric"
           title="Số lượng còn lại"
           afterText="kiện"
-          keyboardType="numeric"
           value={(item.package.quantity - item.quantity).toString()}
         />
       </ScrollView>

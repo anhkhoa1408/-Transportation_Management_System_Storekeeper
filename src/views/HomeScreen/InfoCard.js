@@ -1,10 +1,14 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { Icon, ListItem, Text } from 'react-native-elements';
 import { primary } from '../../styles/color';
 import { shadowCard } from '../../styles/layoutStyle';
 import * as Animatable from 'react-native-animatable';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { COLORS } from '../../styles';
+
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('window').width;
 
 const InfoCard = ({ item, navigation, type }) => {
   const ref = useRef(null);
@@ -33,40 +37,14 @@ const InfoCard = ({ item, navigation, type }) => {
     <Animatable.View ref={ref} duration={500} easing="ease">
       <TouchableWithoutFeedback onPress={() => handlePress(item.navigate)}>
         <ListItem containerStyle={styles.listItem}>
-          <ListItem.Content
+          <Icon name={item.icon} reverseColor={COLORS.black} reverse color={COLORS.white} />
+          <Text
             style={{
-              height: '100%',
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'space-evenly',
-              backgroundColor: primary,
+              color: '#000',
+              fontSize: 14,
             }}>
-            <View
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                padding: 10,
-                borderRadius: 15,
-                marginBottom: 5,
-              }}>
-              <View
-                style={{
-                  backgroundColor: '#FFF',
-                  padding: 5,
-                  borderRadius: 10,
-                }}>
-                <Icon name={item.icon} color={primary} />
-              </View>
-            </View>
-            <Text
-              style={{
-                color: '#FFF',
-                fontSize: 16,
-              }}>
-              {item.title}
-            </Text>
-          </ListItem.Content>
+            {item.title}
+          </Text>
         </ListItem>
       </TouchableWithoutFeedback>
     </Animatable.View>
@@ -75,22 +53,26 @@ const InfoCard = ({ item, navigation, type }) => {
 
 const styles = StyleSheet.create({
   listItem: {
-    width: 185,
-    height: 120,
+    height: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
-    backgroundColor: primary,
     borderColor: '#000',
     paddingVertical: 15,
     marginHorizontal: 15,
-    borderRadius: 20,
-    ...shadowCard,
+    backgroundColor: 'transparent',
   },
   titleFont: {
     fontSize: 16,
     color: '#737373',
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    backgroundColor: COLORS.white,
   },
 });
 

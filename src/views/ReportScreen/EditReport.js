@@ -123,6 +123,7 @@ const EditReport = ({ navigation, route }) => {
           <TextField
             title="Tổng số lần nhập"
             afterText="lần"
+            disabled
             error={formik.touched.total_import && formik.errors.total_import}
             errorMessage={formik.errors.total_import}
             keyboardType="numeric"
@@ -133,6 +134,7 @@ const EditReport = ({ navigation, route }) => {
           <TextField
             title="Tổng số lần xuất"
             afterText="lần"
+            disabled
             error={formik.touched.total_export && formik.errors.total_export}
             errorMessage={formik.errors.total_export}
             keyboardType="numeric"

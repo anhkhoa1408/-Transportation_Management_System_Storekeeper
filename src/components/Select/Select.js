@@ -12,7 +12,7 @@ const Select = props => {
       <View style={styles.inputView}>
         <Picker
           mode="dropdown"
-          style={{ flex: 1, fontSize: 17, color: '#000' }}
+          style={{ flex: 1, fontSize: 15, color: '#000' }}
           dropdownIconColor={primary}
           selectedValue={selectedItem}
           onValueChange={(itemValue, itemIndex) => {
@@ -42,13 +42,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   texttitle: {
-    fontSize: 20,
+    fontSize: 15,
     color: '#000000',
   },
   inputView: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20,
+    marginTop: 10,
+    marginBottom: 5,
     backgroundColor: '#F3F3FA',
     borderRadius: 8,
     paddingVertical: 3,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
-import { COLORS } from '../../../styles';
+import { COLORS, FONTS } from '../../../styles';
 import moment from 'moment';
 
 const Detail = ({ item, navigation }) => {
@@ -20,7 +20,7 @@ const Detail = ({ item, navigation }) => {
           />
         </View>
         <ListItem.Content>
-          <ListItem.Title>ID: {item.id}</ListItem.Title>
+          <ListItem.Title style={FONTS.Medium}>ID: {item.id}</ListItem.Title>
           <ListItem.Subtitle>
             {moment(item.createdAt).format('DD-MM-YYYY HH:mm:ss')}
           </ListItem.Subtitle>

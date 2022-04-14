@@ -1,6 +1,6 @@
 // Import Component
-import React, { useState, useEffect } from 'react';
-import { Image, StyleSheet, View, FlatList } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { Image, StyleSheet, View, FlatList, Dimensions } from 'react-native';
 import { Card, Icon, withBadge, Text } from 'react-native-elements';
 import Loading from '../../components/Loading';
 import Header from '../../components/Header';
@@ -16,9 +16,13 @@ import banner from './../../assets/images/delivery.jpg';
 import { container, shadowCard } from '../../styles/layoutStyle';
 import { danger, primary, success } from '../../styles/color';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Animatable from 'react-native-animatable';
+
+const screenWidth = Dimensions.get("window").width
 
 function HomeScreen({ navigation, userInfo, noties, ...props }) {
   const [badge, setBadge] = useState(null);
+  const ref = useRef(null)
   const [listData, setListData] = useState([
     {
       icon: 'add',
@@ -42,6 +46,17 @@ function HomeScreen({ navigation, userInfo, noties, ...props }) {
   useEffect(() => {
     setBadge(Badge(Object.keys(noties).length));
   }, [noties]);
+
+  useEffect(() => {
+    ref.current.animate({
+      from: {
+        right: -screenWidth,
+      },
+      to: {
+        right: 0,
+      }
+    })
+  }, [])
 
   const Badge = totalNoties => {
     const BadgedIcon = withBadge(totalNoties)(Icon);
@@ -99,17 +114,22 @@ function HomeScreen({ navigation, userInfo, noties, ...props }) {
         </View>
 
         {/* Info Cards Section */}
-        <KeyboardAwareScrollView enableOnAndroid enableAutomaticScroll>
-          <View style={homeStyle.listInfo}>
-            <FlatList
-              contentContainerStyle={{ paddingVertical: 15 }}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-              data={listData}
-              renderItem={renderItem}
-              keyExtractor={keyExtractor}
-            />
-          </View>
+        <KeyboardAwareScrollView
+          enableOnAndroid
+          enableAutomaticScroll
+          style={{ width: '100%' }}>
+          <Animatable.View ref={ref} easing="ease" duration={500}>
+            <View style={homeStyle.listInfo}>
+              <FlatList
+                contentContainerStyle={{ paddingVertical: 5 }}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+                data={listData}
+                renderItem={renderItem}
+                keyExtractor={keyExtractor}
+              />
+            </View>
+          </Animatable.View>
 
           <View
             style={{
@@ -164,9 +184,19 @@ const homeStyle = StyleSheet.create({
     ...container,
   },
   listInfo: {
-    width: '100%',
-    height: 150,
-    marginBottom: 20,
+    // width: ,
+    height: 108,
+    backgroundColor: COLORS.gray,
+    marginLeft: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
+    zIndex: 99,
+    marginBottom: 25,
   },
   banner: {
     width: '100%',
@@ -174,8 +204,9 @@ const homeStyle = StyleSheet.create({
   },
   cardContainer: {
     flex: 1,
-    borderRadius: 20,
+    borderRadius: 10,
     marginTop: 0,
+    borderWidth: 0,
     flexDirection: 'column',
     ...shadowCard,
     shadowColor: COLORS.primary,

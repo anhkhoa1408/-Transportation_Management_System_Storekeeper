@@ -84,33 +84,43 @@ export default function HistoryScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       {loading}
       <Header headerText="Lịch sử nhập xuất"></Header>
-      <Tab
-        value={index}
-        onChange={e => setIndex(e)}
-        indicatorStyle={{
-          backgroundColor: COLORS.primary,
-          height: 3,
-        }}>
-        <Tab.Item
-          title="Nhập kho"
-          titleStyle={{ fontSize: 12, color: COLORS.primary }}
-          icon={{
-            name: 'vertical-align-bottom',
-            color: COLORS.primary,
-          }}
-          containerStyle={{
-            backgroundColor: '#FFF',
-          }}
-        />
-        <Tab.Item
-          title="Xuất kho"
-          titleStyle={{ fontSize: 12, color: COLORS.primary }}
-          icon={{ name: 'vertical-align-top', color: COLORS.primary }}
-          containerStyle={{
-            backgroundColor: '#FFF',
-          }}
-        />
-      </Tab>
+      <View style={{ paddingHorizontal: 15, height: 62 }}>
+        <Tab
+          value={index}
+          onChange={e => setIndex(e)}
+          indicatorStyle={{
+            height: 0,
+          }}>
+          <Tab.Item
+            title="Nhập kho"
+            titleStyle={{ fontSize: 12, color: COLORS.primary }}
+            containerStyle={{
+              backgroundColor: COLORS.gray,
+              borderTopLeftRadius: 20,
+              borderBottomLeftRadius: 20,
+            }}
+            buttonStyle={[
+              { padding: 3 },
+              index === 0 ? [styles.activeTab] : [styles.inactiveTab],
+            ]}
+          />
+          <Tab.Item
+            title="Xuất kho"
+            titleStyle={{ fontSize: 12, color: COLORS.primary }}
+            containerStyle={[
+              {
+                backgroundColor: COLORS.gray,
+                borderTopRightRadius: 20,
+                borderBottomRightRadius: 20,
+              },
+            ]}
+            buttonStyle={[
+              { padding: 3 },
+              index === 1 ? [styles.activeTab] : [styles.inactiveTab],
+            ]}
+          />
+        </Tab>
+      </View>
 
       <TabView value={index} onChange={setIndex} animationType="spring">
         <TabView.Item style={{ width: '100%' }}>
@@ -187,5 +197,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: '50%',
+  },
+  activeTab: {
+    backgroundColor: COLORS.white,
+    margin: 8,
+    marginHorizontal: 5,
+    borderRadius: 16,
+  },
+  inactiveTab: {
+    backgroundColor: '#F1F1FA',
+    margin: 8,
+    marginHorizontal: 5,
   },
 });
