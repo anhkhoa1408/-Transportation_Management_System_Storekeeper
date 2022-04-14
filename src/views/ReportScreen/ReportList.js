@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   FlatList,
   SafeAreaView,
+  PermissionsAndroid,
 } from 'react-native';
 import { Text, ListItem, Icon, CheckBox } from 'react-native-elements';
 import CustomSearch from '../../components/CustomSearch/CustomSearch';
@@ -16,18 +17,88 @@ import { COLORS, FONTS } from '../../styles';
 import storageApi from '../../api/storageApi';
 import moment from 'moment';
 import { simplifyString } from './../../utils/simplifyString';
+import PrimaryButton from './../../components/CustomButton/PrimaryButton';
+import { exportExcel } from '../../services/export';
+import reportApi from '../../api/reportApi';
+import ModalMess from '../../components/ModalMess';
+import Loading from '../../components/Loading';
 
 const ReportList = ({ navigation }) => {
   const [_start, setStart] = useState(0);
   const [data, setData] = useState([]);
+  const [exportList, setExportList] = useState([]);
+  const [loading, setLoading] = useState(null);
+  const [alert, setAlert] = useState(null);
 
   const [check, setCheck] = useState(
     Array.from({ length: data.length }, (_, index) => false),
   );
 
-  const handleCheck = index => {
-    check[index] = !check[index];
-    setCheck([...check]);
+  const handleCheck = useCallback(
+    index => {
+      check[index] = !check[index];
+      setCheck([...check]);
+      if (check[index]) {
+        setExportList([...exportList, data[index].id]);
+      } else {
+        setExportList([
+          ...exportList.filter(item => {
+            return item !== data[index].id;
+          }),
+        ]);
+      }
+    },
+    [data, exportList],
+  );
+
+  const handleCheckAll = () => {
+    setCheck(Array.from({ length: data.length }, (_, index) => true));
+    setExportList(data.map(item => item.id));
+  };
+
+  const handleUnCheckAll = () => {
+    setCheck(Array.from({ length: data.length }, (_, index) => false));
+    setExportList([]);
+  };
+
+  const handleExport = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
+    const readGranted = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    );
+    const writeGranted = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    );
+
+    if (!readGranted || !writeGranted) {
+      setAlert({
+        type: 'danger',
+        message: 'Chưa cấp quyền',
+      });
+      return;
+    }
+    setLoading(<Loading />);
+    Promise.all(exportList.map(item => reportApi.getDetail(item)))
+      .then(responses => {
+        responses.forEach(data => {
+          exportExcel(JSON.parse(data.report));
+        });
+        setExportList([])
+        setCheck(Array.from({ length: data.length }, (_, index) => false))
+        setLoading(null);
+        setAlert({
+          type: 'success',
+          message: 'Lưu báo cáo thành công tại thư mục Download',
+        });
+      })
+      .catch(error => console.log(error));
   };
 
   const renderItem = ({ item, index }) => (
@@ -55,7 +126,9 @@ const ReportList = ({ navigation }) => {
           />
         </View>
         <ListItem.Content>
-          <ListItem.Title style={FONTS.Medium}>ID: {simplifyString(item.id, 20)}</ListItem.Title>
+          <ListItem.Title style={FONTS.Smol}>
+            ID: {simplifyString(item.id, 20)}
+          </ListItem.Title>
           <ListItem.Subtitle>
             Cập nhật: {moment(item.updatedAt).format('DD/MM/YYYY HH:mm')}
           </ListItem.Subtitle>
@@ -76,21 +149,28 @@ const ReportList = ({ navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      setLoading(<Loading />);
       storageApi
         .reportList({ _start: 0 })
         .then(response => {
+          setLoading(null);
           setData(response);
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          setLoading(null);
+        });
     });
 
     if (_start) {
+      setLoading(<Loading />);
       storageApi
         .reportList({ _start: _start })
         .then(response => {
           setData([...data, ...response]);
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          setLoading(null)
+        });
     }
 
     return unsubscribe;
@@ -99,6 +179,8 @@ const ReportList = ({ navigation }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
       setStart(0);
+      setExportList([])
+      setCheck([])
     });
 
     return unsubscribe;
@@ -106,14 +188,19 @@ const ReportList = ({ navigation }) => {
 
   return (
     <SafeAreaView style={style.container}>
+      {loading}
+      {alert && (
+        <ModalMess
+          type={alert.type}
+          message={alert.message}
+          alert={alert}
+          setAlert={setAlert}
+        />
+      )}
       <Header headerText={'Danh sách báo cáo'} />
-
       <View style={{ width: '100%', paddingHorizontal: 10, display: 'flex' }}>
         {check.some(item => item === true) ? (
-          <TouchableOpacity
-            onPress={() =>
-              setCheck(Array.from({ length: data.length }, (_, index) => false))
-            }>
+          <TouchableOpacity onPress={handleUnCheckAll}>
             <Text
               style={{
                 alignSelf: 'flex-end',
@@ -125,10 +212,7 @@ const ReportList = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            onPress={() =>
-              setCheck(Array.from({ length: data.length }, (_, index) => true))
-            }>
+          <TouchableOpacity onPress={handleCheckAll}>
             <Text
               style={{
                 alignSelf: 'flex-end',
@@ -169,11 +253,12 @@ const ReportList = ({ navigation }) => {
       />
       {check.some(item => item === true) && (
         <View style={{ padding: 20, paddingBottom: 30 }}>
-          <PillButton
+          <PrimaryButton
             title="In báo cáo"
             buttonStyle={{
               backgroundColor: primary,
             }}
+            onPress={handleExport}
           />
         </View>
       )}
