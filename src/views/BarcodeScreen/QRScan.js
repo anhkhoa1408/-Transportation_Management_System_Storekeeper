@@ -32,7 +32,6 @@ const QRScan = ({ navigation, route }) => {
             name="highlight"
             reverse
             reverseColor={COLORS.white}
-            // containerStyle={styles.icon}
           />
         </TouchableOpacity>
       </View>

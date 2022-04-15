@@ -36,7 +36,7 @@ const HistoryDetail = ({ navigation, route }) => {
           disabled
           editable={false}
           keyboardType="numeric"
-          title="Số lượng nhập xuất"
+          title="Số lượng"
           afterText="kiện"
           value={item.quantity.toString()}
         />
@@ -54,14 +54,6 @@ const HistoryDetail = ({ navigation, route }) => {
           keyboardType="numeric"
           title="Tên kiện hàng"
           value={item.package.name}
-        />
-        <TextField
-          disabled
-          editable={false}
-          keyboardType="numeric"
-          title="Số lượng còn lại"
-          afterText="kiện"
-          value={(item.package.quantity - item.quantity).toString()}
         />
       </ScrollView>
     </SafeAreaView>
