@@ -211,14 +211,14 @@ const SignIn = ({ navigation, route }) => {
           </View>
         </View>
       </KeyboardAwareScrollView>
-      <View style={[styles.container1]}>
+      {/* <View style={[styles.container1]}>
         <Text style={[FONTS.Medium]}>Chưa có tài khoản? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
           <Text style={{ ...FONTS.BigBold, color: COLORS.primary }}>
             Đăng ký
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };
@@ -240,7 +240,7 @@ export const styles = StyleSheet.create({
   },
   forgot: {
     color: COLORS.primary,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     alignSelf: 'flex-end',
   },

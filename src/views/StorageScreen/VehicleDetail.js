@@ -32,6 +32,7 @@ const VehicleDetail = ({ navigation, route }) => {
         );
         data.packages.filter(item => item.received);
         setData(data);
+        // console.log(JSON.stringify(data))
       })
       .catch(err => console.log(err));
   }, []);
@@ -93,7 +94,7 @@ const VehicleDetail = ({ navigation, route }) => {
             />
           </View>
         </View>
-        <View style={style.vehicle}>
+        <View style={[style.vehicle, {alignItems: 'flex-start'}]}>
           <InfoField
             style={{ flex: 1 }}
             title="Đến"

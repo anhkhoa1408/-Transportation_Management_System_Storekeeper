@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Alert, SafeAreaView, StyleSheet } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { COLORS, STYLES } from '../../styles';
 import PrimaryButton from '../../components/CustomButton/PrimaryButton';
+import { Icon } from 'react-native-elements';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View } from 'react-native-animatable';
 
 const QRScan = ({ navigation, route }) => {
+  const ref = useRef(null);
+  const [flash, setFlash] = useState(false);
   const handleScanBarcode = e => {
+    ref.current.reactivate()
+    console.log(e.data)
     navigation.navigate('QRDetail', {
       ...route.params,
       qr: e.data,
@@ -15,13 +22,32 @@ const QRScan = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={[STYLES.container, { alignItems: 'stretch' }]}>
+      <View style={styles.icon}>
+        <TouchableOpacity
+          onPress={() => {
+            setFlash(!flash);
+            console.log(1);
+          }}>
+          <Icon
+            name="highlight"
+            reverse
+            reverseColor={COLORS.white}
+            // containerStyle={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
       <QRCodeScanner
+        ref={ref}
         onRead={handleScanBarcode}
-        // flashMode={RNCamera.Constants.FlashMode.torch}
+        flashMode={
+          flash
+            ? RNCamera.Constants.FlashMode.torch
+            : RNCamera.Constants.FlashMode.off
+        }
         showMarker
         markerStyle={{
           borderColor: COLORS.primary,
-          borderWidth: 4,
+          borderWidth: 2,
           borderStyle: 'dashed',
         }}
         cameraStyle={{
@@ -47,4 +73,12 @@ const QRScan = ({ navigation, route }) => {
 
 export default QRScan;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  icon: {
+    position: 'absolute',
+    top: 10,
+    right: 0,
+    elevation: 10,
+    zIndex: 99999
+  },
+});
