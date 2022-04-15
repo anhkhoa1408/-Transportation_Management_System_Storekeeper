@@ -91,6 +91,7 @@ const StorageScreen = ({ navigation }) => {
     const unsubscribe = navigation.addListener('focus', () => {
       getListPackage({ page: 0 })
         .then(response => {
+          console.log(JSON.stringify(response))
           setData(response);
         })
         .catch(error => console.log(error));

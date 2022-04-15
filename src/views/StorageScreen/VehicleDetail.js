@@ -90,7 +90,10 @@ const VehicleDetail = ({ navigation, route }) => {
               name="camera"
               type="font-awesome"
               color="#FFF"
-              onPress={() => navigation.navigate('QRScan', route.params)}
+              onPress={() => navigation.navigate('QRScan', {
+                ...route.params,
+                shipmentData: data
+              })}
             />
           </View>
         </View>
