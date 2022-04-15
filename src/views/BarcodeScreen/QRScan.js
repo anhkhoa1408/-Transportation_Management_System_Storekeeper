@@ -54,11 +54,11 @@ const QRScan = ({ navigation, route }) => {
           height: '100%',
         }}
       />
-      <PrimaryButton
+      {/* <PrimaryButton
         onPress={() =>
           navigation.navigate('QRDetail', {
             ...route.params,
-            qr: '624bbb47e68d1a14e46f7809',
+            qr: '62584c937f4eb710c0879c5e',
           })
         }
         title="tiếp tục"
@@ -66,7 +66,7 @@ const QRScan = ({ navigation, route }) => {
           width: '50%',
           alignSelf: 'center',
         }}
-      />
+      /> */}
     </SafeAreaView>
   );
 };

@@ -15,12 +15,8 @@ import { COLORS } from '../../../styles';
 
 const PackageInfo = ({ data, formik, remainingPackage, type }) => {
   return (
-    <KeyboardAwareScrollView
-      enableAutomaticScroll
-      enableOnAndroid
-      style={style.infoContainer}
-      contentContainerStyle={{ paddingHorizontal: 20 }}>
-      <Text style={[{ fontSize: 20, marginBottom: 10 }]}>
+    <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
+      <Text style={[{ fontSize: 15, marginBottom: 10 }]}>
         Thông tin kiện hàng
       </Text>
       <View style={[style.infoPackages]}>
@@ -28,7 +24,7 @@ const PackageInfo = ({ data, formik, remainingPackage, type }) => {
           <InfoField
             style={{ flex: 1 }}
             title="Tên"
-            content={!data.name || 'Chưa đặt tên'}
+            content={data.name || 'Chưa đặt tên'}
           />
           <InfoField
             style={{ flex: 1 }}
@@ -39,7 +35,7 @@ const PackageInfo = ({ data, formik, remainingPackage, type }) => {
         <View style={style.info}>
           <InfoField
             style={{ flex: 1 }}
-            title="Số lượng còn lại"
+            title="Số lượng cần nhập"
             content={remainingPackage + ' kiện'}
           />
           <InfoField
@@ -56,20 +52,7 @@ const PackageInfo = ({ data, formik, remainingPackage, type }) => {
           />
         </View>
       </View>
-      <View style={{ marginTop: 20 }}>
-        <TextField
-          title={`Số lượng ${type === 'import' ? 'nhập' : 'xuất'}`}
-          value={formik.values.packages.toString()}
-          onChangeText={text => formik.setFieldValue('packages', text)}
-          onBlur={() => formik.setFieldTouched('packages')}
-          keyboardType="numeric"
-          afterText="kiện hàng"
-          error={formik.touched.packages && formik.errors.packages}
-          errorMessage={formik.errors.packages}
-        />
-      </View>
-      <PrimaryButton title="Thực hiện" onPress={formik.submitForm} />
-    </KeyboardAwareScrollView>
+    </View>
   );
 };
 
@@ -79,7 +62,7 @@ const style = StyleSheet.create({
   info: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginVertical: 15,
   },
   infoContainer: {
