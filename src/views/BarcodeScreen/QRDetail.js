@@ -1,9 +1,6 @@
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import {
-  SafeAreaView, StyleSheet,
-  View
-} from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { Icon, Tab, TabView } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import QRCode from 'react-native-qrcode-svg';
@@ -91,14 +88,14 @@ const QRDetail = ({ navigation, route }) => {
           );
           setAlert({
             type: 'success',
-            message: 'Nhập kiện hàng thành công',
+            message: 'Xuất kiện hàng thành công',
           });
           setLoading(null);
         })
         .catch(error => {
           setAlert({
             type: 'danger',
-            message: 'Nhập kiện hàng thất bại',
+            message: 'Xuất kiện hàng thất bại',
           });
           setLoading(null);
         });
@@ -116,7 +113,10 @@ const QRDetail = ({ navigation, route }) => {
         .shipmentItemDetail(shipPack.id)
         .then(response => {
           setShipmentItem(response);
-          setRemainingPackage(response.quantity - response.received);
+          if (type === 'import')
+            setRemainingPackage(response.quantity - response.received);
+          else if (type === "export")
+            setRemainingPackage(response.quantity - response.export_received);
         })
         .catch(err => {
           setAlert({
@@ -143,45 +143,45 @@ const QRDetail = ({ navigation, route }) => {
           <Icon name="west" size={30} onPress={() => navigation.goBack()} />
         }
         headerText={'Thông tin mã QR'}
-        />
-        <KeyboardAwareScrollView enableAutomaticScroll enableOnAndroid>
-      <View style={{ paddingHorizontal: 15, height: 62 }}>
-        <Tab
-          value={index}
-          onChange={e => setIndex(e)}
-          indicatorStyle={{
-            height: 0,
-          }}>
-          <Tab.Item
-            title="QR code"
-            titleStyle={{ fontSize: 12, color: COLORS.primary }}
-            containerStyle={{
-              backgroundColor: COLORS.gray,
-              borderTopLeftRadius: 20,
-              borderBottomLeftRadius: 20,
-            }}
-            buttonStyle={[
-              { padding: 3 },
-              index === 0 ? [style.activeTab] : [style.inactiveTab],
-            ]}
-          />
-          <Tab.Item
-            title="Kiện hàng"
-            titleStyle={{ fontSize: 12, color: COLORS.primary }}
-            containerStyle={[
-              {
+      />
+      <KeyboardAwareScrollView enableAutomaticScroll enableOnAndroid>
+        <View style={{ paddingHorizontal: 15, height: 62 }}>
+          <Tab
+            value={index}
+            onChange={e => setIndex(e)}
+            indicatorStyle={{
+              height: 0,
+            }}>
+            <Tab.Item
+              title="QR code"
+              titleStyle={{ fontSize: 12, color: COLORS.primary }}
+              containerStyle={{
                 backgroundColor: COLORS.gray,
-                borderTopRightRadius: 20,
-                borderBottomRightRadius: 20,
-              },
-            ]}
-            buttonStyle={[
-              { padding: 3 },
-              index === 1 ? [style.activeTab] : [style.inactiveTab],
-            ]}
+                borderTopLeftRadius: 20,
+                borderBottomLeftRadius: 20,
+              }}
+              buttonStyle={[
+                { padding: 3 },
+                index === 0 ? [style.activeTab] : [style.inactiveTab],
+              ]}
             />
-        </Tab>
-      </View>
+            <Tab.Item
+              title="Kiện hàng"
+              titleStyle={{ fontSize: 12, color: COLORS.primary }}
+              containerStyle={[
+                {
+                  backgroundColor: COLORS.gray,
+                  borderTopRightRadius: 20,
+                  borderBottomRightRadius: 20,
+                },
+              ]}
+              buttonStyle={[
+                { padding: 3 },
+                index === 1 ? [style.activeTab] : [style.inactiveTab],
+              ]}
+            />
+          </Tab>
+        </View>
 
         <TabView value={index} onChange={setIndex} animationType="spring">
           <TabView.Item style={{ width: '100%', paddingVertical: 30 }}>

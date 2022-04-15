@@ -1,21 +1,13 @@
 import React, { memo } from 'react';
-import {
-  KeyboardAvoidingView,
-  ScrollView,
-  View,
-  StyleSheet,
-} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
-import PrimaryButton from '../../../components/CustomButton/PrimaryButton';
-import { convertPackageType } from '../../../utils/convertPackageType';
 import { InfoField } from '../../../components/InfoField';
-import TextField from '../../../components/TextField/TextField';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { COLORS } from '../../../styles';
+import { convertPackageType } from '../../../utils/convertPackageType';
 
-const PackageInfo = ({ data, formik, remainingPackage, type }) => {
+const PackageInfo = ({ data, remainingPackage, type }) => {
   return (
-    <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
+    <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
       <Text style={[{ fontSize: 15, marginBottom: 10 }]}>
         Thông tin kiện hàng
       </Text>
@@ -26,16 +18,12 @@ const PackageInfo = ({ data, formik, remainingPackage, type }) => {
             title="Tên"
             content={data.name || 'Chưa đặt tên'}
           />
-          <InfoField
-            style={{ flex: 1 }}
-            title="Trọng lượng"
-            content={data.weight + ' kg'}
-          />
+          <InfoField style={{ flex: 1 }} title="Mã QR" content={data.id} />
         </View>
         <View style={style.info}>
           <InfoField
             style={{ flex: 1 }}
-            title="Số lượng cần nhập"
+            title={`Số lượng cần ${type === 'import' ? 'nhập' : 'xuất'}`}
             content={remainingPackage + ' kiện'}
           />
           <InfoField
@@ -49,6 +37,11 @@ const PackageInfo = ({ data, formik, remainingPackage, type }) => {
             style={{ flex: 1 }}
             title="Loại"
             content={convertPackageType(data?.package_type?.package_type)}
+          />
+          <InfoField
+            style={{ flex: 1 }}
+            title="Trọng lượng"
+            content={data.weight + ' kg'}
           />
         </View>
       </View>
