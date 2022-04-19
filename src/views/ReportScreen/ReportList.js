@@ -29,6 +29,8 @@ const ReportList = ({ navigation }) => {
   const [exportList, setExportList] = useState([]);
   const [loading, setLoading] = useState(null);
   const [alert, setAlert] = useState(null);
+  const [field, setField] = useState('id');
+  const [value, setValue] = useState('');
 
   const [check, setCheck] = useState(
     Array.from({ length: data.length }, (_, index) => false),
@@ -90,8 +92,8 @@ const ReportList = ({ navigation }) => {
         responses.forEach(data => {
           exportExcel(JSON.parse(data.report));
         });
-        setExportList([])
-        setCheck(Array.from({ length: data.length }, (_, index) => false))
+        setExportList([]);
+        setCheck(Array.from({ length: data.length }, (_, index) => false));
         setLoading(null);
         setAlert({
           type: 'success',
@@ -147,6 +149,35 @@ const ReportList = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+  const handleSearch = () => {
+    storageApi
+      .reportList({ _start: _start, [field]: value })
+      .then(response => {
+        console.log(response);
+        setData(response);
+      })
+      .catch(error => {
+        setLoading(null);
+      });
+  };
+
+  const handleCancel = () => {
+    setValue('');
+  };
+
+  const handleClear = () => {
+    setValue('');
+    storageApi
+      .reportList({ _start: 0 })
+      .then(response => {
+        setLoading(null);
+        setData(response);
+      })
+      .catch(error => {
+        setLoading(null);
+      });
+  };
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setLoading(<Loading />);
@@ -161,30 +192,32 @@ const ReportList = ({ navigation }) => {
         });
     });
 
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setStart(0);
+      setExportList([]);
+      setCheck([]);
+      setValue('');
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
     if (_start) {
-      setLoading(<Loading />);
       storageApi
         .reportList({ _start: _start })
         .then(response => {
           setData([...data, ...response]);
         })
         .catch(error => {
-          setLoading(null)
+          setLoading(null);
         });
     }
-
-    return unsubscribe;
   }, [_start]);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('blur', () => {
-      setStart(0);
-      setExportList([])
-      setCheck([])
-    });
-
-    return unsubscribe;
-  }, []);
 
   return (
     <SafeAreaView style={style.container}>
@@ -225,7 +258,13 @@ const ReportList = ({ navigation }) => {
           </TouchableOpacity>
         )}
 
-        <CustomSearch />
+        <CustomSearch
+          value={value}
+          onChangeText={setValue}
+          onSubmitEditing={handleSearch}
+          onClear={handleClear}
+          onCancel={handleCancel}
+        />
       </View>
 
       <FlatList
