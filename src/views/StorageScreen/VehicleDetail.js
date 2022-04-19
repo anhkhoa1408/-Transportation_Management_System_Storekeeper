@@ -32,7 +32,7 @@ const VehicleDetail = ({ navigation, route }) => {
         );
         data.packages.filter(item => item.received);
         setData(data);
-        // console.log(JSON.stringify(data))
+        console.log(JSON.stringify(data))
       })
       .catch(err => console.log(err));
   }, []);

@@ -1,9 +1,7 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { Icon, ListItem, Text } from 'react-native-elements';
-import { primary } from '../../styles/color';
-import { shadowCard } from '../../styles/layoutStyle';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import { Icon, ListItem, Text } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { COLORS } from '../../styles';
 
