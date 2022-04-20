@@ -1,6 +1,7 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Switch } from 'react-native-elements';
-import { View, StyleSheet } from 'react-native';
+import { COLORS } from '../../styles';
 import { success } from '../../styles/color';
 
 const ButtonSwitch = props => {
@@ -14,7 +15,7 @@ const ButtonSwitch = props => {
       <Switch
         onValueChange={props.onValueChange}
         thumbColor="#FFF"
-        trackColor={{ false: '#CCC', true: success }}
+        trackColor={{ false: COLORS.gray, true: success }}
         value={props.checked}
       />
     </View>
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: success,
   },
   switchOff: {
-    backgroundColor: '#CCC',
+    backgroundColor: COLORS.gray,
   },
 });
 

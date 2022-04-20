@@ -18,7 +18,7 @@ import { getAvatarFromUser } from '../../utils/avatarUltis';
 const Account = ({ navigation, userInfo }) => {
   const dispatch = useDispatch();
   const [toggle, setToggle] = useState({
-    language: true,
+    language: false,
     nightMode: false,
     notification: false,
   });
@@ -99,14 +99,24 @@ const Account = ({ navigation, userInfo }) => {
             <Icon name={item.icon} color="#FFF" size={22} />
           </View>
           <ListItem.Title
-            style={[FONTS.Medium, {
-              flex: 1,
-              marginLeft: 10,
-            }]}>
+            style={[
+              FONTS.Medium,
+              {
+                flex: 1,
+                marginLeft: 10,
+              },
+            ]}>
             {item.title}
           </ListItem.Title>
 
-          <ListItem.Chevron size={30} />
+          <View
+            style={{
+              padding: 10,
+              backgroundColor: COLORS.gray,
+              borderRadius: 12,
+            }}>
+            <ListItem.Chevron size={22} />
+          </View>
         </ListItem>
       </TouchableOpacity>
     );
@@ -131,10 +141,13 @@ const Account = ({ navigation, userInfo }) => {
             <Icon name={item.icon} color="#FFF" size={22} />
           </View>
           <ListItem.Title
-             style={[FONTS.Medium, {
-              flex: 1,
-              marginLeft: 10,
-            }]}>
+            style={[
+              FONTS.Medium,
+              {
+                flex: 1,
+                marginLeft: 10,
+              },
+            ]}>
             {item.title}
           </ListItem.Title>
 
@@ -147,7 +160,7 @@ const Account = ({ navigation, userInfo }) => {
             <Switch
               onValueChange={e => toggleSwitch(e, item)}
               thumbColor="#FFF"
-              trackColor={{ false: '#CCC', true: success }}
+              trackColor={{ false: COLORS.gray, true: success }}
               value={item.state}
             />
           </View>
@@ -199,7 +212,7 @@ const Account = ({ navigation, userInfo }) => {
             height: 55,
           }}
           avatarStyle={{
-            borderRadius: 30
+            borderRadius: 30,
           }}
           source={{
             uri: getAvatarFromUser(userInfo?.user),
@@ -286,6 +299,6 @@ const styles = StyleSheet.create({
     backgroundColor: success,
   },
   switchOff: {
-    backgroundColor: '#CCC',
+    backgroundColor: COLORS.gray,
   },
 });
