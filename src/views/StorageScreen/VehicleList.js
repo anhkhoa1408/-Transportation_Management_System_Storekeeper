@@ -1,31 +1,29 @@
 import React, { useRef, useState } from 'react';
 import {
-  View,
-  StyleSheet,
-  FlatList,
-  SafeAreaView,
-  TouchableWithoutFeedback,
-  VirtualizedList,
+  SafeAreaView, StyleSheet, TouchableWithoutFeedback, View, VirtualizedList
 } from 'react-native';
-import { Text, ListItem, Icon, CheckBox } from 'react-native-elements';
+import * as Animatable from 'react-native-animatable';
+import { Icon, ListItem, Text } from 'react-native-elements';
+import shipmentApi from '../../api/shipmentAPI';
 import CustomSearch from '../../components/CustomSearch/CustomSearch';
-import { container } from '../../styles/layoutStyle';
 import Header from '../../components/Header';
 import { COLORS } from '../../styles';
-import * as Animatable from 'react-native-animatable';
-import shipmentApi from '../../api/shipmentAPI';
+import { container } from '../../styles/layoutStyle';
 import Loading from './../../components/Loading';
 
 const VehicleList = ({ navigation, route }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(<Loading />);
+  const [field, setField] = useState('_q');
+  const [value, setValue] = useState('');
 
   const { type } = route.params;
 
+  const getShipment =
+    type === 'import' ? shipmentApi.import : shipmentApi.export;
+
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      const getShipment =
-        type === 'import' ? shipmentApi.import : shipmentApi.export;
       getShipment()
         .then(data => {
           setData(data);
@@ -38,6 +36,13 @@ const VehicleList = ({ navigation, route }) => {
     });
     return unsubscribe;
   }, [navigation]);
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setValue("")
+    });
+    return unsubscribe;
+  }, []);
 
   const ref = useRef([]);
 
@@ -95,6 +100,32 @@ const VehicleList = ({ navigation, route }) => {
     </Animatable.View>
   );
 
+  const handleSearch = () => {
+    getShipment({ [field]: value })
+      .then(response => {
+        setData(response);
+      })
+      .catch(error => {
+        setLoading(null);
+      });
+  };
+
+  const handleCancel = () => {
+    setValue('');
+  };
+
+  const handleClear = () => {
+    setValue('');
+    getShipment()
+      .then(response => {
+        setLoading(null);
+        setData(response);
+      })
+      .catch(error => {
+        setLoading(null);
+      });
+  };
+
   return (
     <SafeAreaView style={style.container}>
       {loading}
@@ -106,7 +137,13 @@ const VehicleList = ({ navigation, route }) => {
       />
 
       <View style={{ width: '100%', paddingHorizontal: 10, display: 'flex' }}>
-        <CustomSearch />
+        <CustomSearch
+          value={value}
+          onChangeText={setValue}
+          onSubmitEditing={handleSearch}
+          onClear={handleClear}
+          onCancel={handleCancel}
+        />
       </View>
 
       <VirtualizedList

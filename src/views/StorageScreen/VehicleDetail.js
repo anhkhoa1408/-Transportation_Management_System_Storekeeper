@@ -65,11 +65,12 @@ const VehicleDetail = ({ navigation, route }) => {
           <Icon
             containerStyle={{
               margin: 0,
-              marginRight: 30,
+              marginRight: 20,
               backgroundColor: '#FFF',
               padding: 15,
-              elevation: 5,
+              elevation: 8,
               borderRadius: 20,
+              shadowColor: COLORS.primary
             }}
             name="truck"
             type="font-awesome"

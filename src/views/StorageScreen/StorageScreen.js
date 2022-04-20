@@ -20,6 +20,8 @@ import { simplifyString } from '../../utils/simplifyString';
 const StorageScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
+  const [field, setField] = useState('_q');
+  const [value, setValue] = useState('');
 
   const ref = useRef([]);
 
@@ -76,7 +78,9 @@ const StorageScreen = ({ navigation }) => {
             />
           </View>
           <ListItem.Content>
-            <ListItem.Title style={FONTS.Smol}>ID: {simplifyString(item.package.id, 20)}</ListItem.Title>
+            <ListItem.Title style={FONTS.Smol}>
+              ID: {simplifyString(item.package.id, 20)}
+            </ListItem.Title>
             <ListItem.Subtitle>
               Vị tri: Khu {item.package.position}
             </ListItem.Subtitle>
@@ -86,6 +90,32 @@ const StorageScreen = ({ navigation }) => {
       </TouchableWithoutFeedback>
     </Animatable.View>
   );
+
+  const handleSearch = () => {
+    getListPackage({ page: page, [field]: value })
+      .then(response => {
+        setData(response);
+      })
+      .catch(error => {
+        setLoading(null);
+      });
+  };
+
+  const handleCancel = () => {
+    setValue('');
+  };
+
+  const handleClear = () => {
+    setValue('');
+    getListPackage({ page: 0 })
+      .then(response => {
+        // setLoading(null);
+        setData(response);
+      })
+      .catch(error => {
+        setLoading(null);
+      });
+  };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -110,6 +140,7 @@ const StorageScreen = ({ navigation }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
       setPage(0);
+      handleCancel()
     });
 
     return unsubscribe;
@@ -120,7 +151,13 @@ const StorageScreen = ({ navigation }) => {
       <Header headerText={'Quản lý kho'} />
 
       <View style={{ width: '100%', paddingHorizontal: 10, display: 'flex' }}>
-        <CustomSearch />
+        <CustomSearch
+          value={value}
+          onChangeText={setValue}
+          onSubmitEditing={handleSearch}
+          onClear={handleClear}
+          onCancel={handleCancel}
+        />
       </View>
 
       <FlatList

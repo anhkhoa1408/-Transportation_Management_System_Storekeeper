@@ -29,7 +29,7 @@ const ReportList = ({ navigation }) => {
   const [exportList, setExportList] = useState([]);
   const [loading, setLoading] = useState(null);
   const [alert, setAlert] = useState(null);
-  const [field, setField] = useState('id');
+  const [field, setField] = useState('_q');
   const [value, setValue] = useState('');
 
   const [check, setCheck] = useState(

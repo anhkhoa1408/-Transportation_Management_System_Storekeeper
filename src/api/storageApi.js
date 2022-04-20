@@ -13,6 +13,7 @@ class StorageApi {
   };
 
   reportList = params => {
+    // console.log(params)
     const url = MAIN_URL.concat(`/reports`);
     return axiosClient.get(url, { params });
   };
