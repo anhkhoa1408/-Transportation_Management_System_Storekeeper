@@ -32,7 +32,6 @@ const VehicleDetail = ({ navigation, route }) => {
         );
         data.packages.filter(item => item.received);
         setData(data);
-        console.log(JSON.stringify(data))
       })
       .catch(err => console.log(err));
   }, []);
@@ -70,7 +69,7 @@ const VehicleDetail = ({ navigation, route }) => {
               padding: 15,
               elevation: 8,
               borderRadius: 20,
-              shadowColor: COLORS.primary
+              shadowColor: COLORS.primary,
             }}
             name="truck"
             type="font-awesome"
@@ -91,14 +90,16 @@ const VehicleDetail = ({ navigation, route }) => {
               name="camera"
               type="font-awesome"
               color="#FFF"
-              onPress={() => navigation.navigate('QRScan', {
-                ...route.params,
-                shipmentData: data
-              })}
+              onPress={() =>
+                navigation.navigate('QRScan', {
+                  ...route.params,
+                  shipmentData: data,
+                })
+              }
             />
           </View>
         </View>
-        <View style={[style.vehicle, {alignItems: 'flex-start'}]}>
+        <View style={[style.vehicle, { alignItems: 'flex-start' }]}>
           <InfoField
             style={{ flex: 1 }}
             title="Đến"

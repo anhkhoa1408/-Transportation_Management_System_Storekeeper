@@ -106,7 +106,7 @@ const QRDetail = ({ navigation, route }) => {
     if (shipmentData && qr) {
       let data = shipmentData.packages.find(item => item.id === qr);
       let shipPack = shipmentData.shipment_items.find(
-        item => item.package === qr,
+        item => item.package === qr && item.assmin === false,
       );
       setData(data);
       shipmentApi
@@ -115,7 +115,7 @@ const QRDetail = ({ navigation, route }) => {
           setShipmentItem(response);
           if (type === 'import')
             setRemainingPackage(response.quantity - response.received);
-          else if (type === "export")
+          else if (type === 'export')
             setRemainingPackage(response.quantity - response.export_received);
         })
         .catch(err => {
