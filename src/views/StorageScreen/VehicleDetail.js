@@ -171,10 +171,10 @@ const VehicleDetail = ({ navigation, route }) => {
                           <Text style={{ ...style.info }}>{item.received}</Text>
                         </Text>
                       )}
-                      <Text style={{ ...FONTS.Medium }}>
+                      {/* <Text style={{ ...FONTS.Medium }}>
                         Địa điểm hiện tại:{' '}
                         <Text style={{ ...style.info }}>{item.position}</Text>
-                      </Text>
+                      </Text> */}
                     </View>
                     <CheckBox
                       containerStyle={{ padding: 0 }}
@@ -198,7 +198,7 @@ const VehicleDetail = ({ navigation, route }) => {
               flexDirection: 'row',
             }}>
             <ListItem.Title style={{ flex: 1, ...FONTS.Big }}>
-              In kèm barcode
+              In kèm QR
             </ListItem.Title>
             <ButtonSwitch
               checked={checked}
