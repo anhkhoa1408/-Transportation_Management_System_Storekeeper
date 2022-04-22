@@ -123,7 +123,9 @@ export default function HistoryScreen({ navigation }) {
       </View>
 
       <TabView value={index} onChange={setIndex} animationType="spring">
-        <TabView.Item style={{ width: '100%' }}>
+        <TabView.Item
+          onMoveShouldSetResponder={e => e.stopPropagation()}
+          style={{ width: '100%' }}>
           <FlatList
             data={imports}
             renderItem={renderItem}
@@ -145,7 +147,9 @@ export default function HistoryScreen({ navigation }) {
             }
           />
         </TabView.Item>
-        <TabView.Item style={{ width: '100%' }}>
+        <TabView.Item
+          onMoveShouldSetResponder={e => e.stopPropagation()}
+          style={{ width: '100%' }}>
           <FlatList
             data={exports}
             renderItem={renderItem}
