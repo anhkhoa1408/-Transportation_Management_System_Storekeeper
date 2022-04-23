@@ -95,11 +95,11 @@ const Account = ({ navigation, userInfo }) => {
           bottomDivider>
           <View
             style={{
-              backgroundColor: item.color,
+              backgroundColor: item.neutral,
               padding: 10,
               borderRadius: 10,
             }}>
-            <Icon name={item.icon} color="#FFF" size={22} />
+            <Icon name={item.icon} color={item.color} size={22} />
           </View>
           <ListItem.Title
             style={[
@@ -137,11 +137,11 @@ const Account = ({ navigation, userInfo }) => {
           bottomDivider>
           <View
             style={{
-              backgroundColor: item.color,
+              backgroundColor: item.neutral,
               padding: 10,
               borderRadius: 10,
             }}>
-            <Icon name={item.icon} color="#FFF" size={22} />
+            <Icon name={item.icon} color={item.color} size={22} />
           </View>
           <ListItem.Title
             style={[
