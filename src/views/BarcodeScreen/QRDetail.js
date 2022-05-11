@@ -106,7 +106,7 @@ const QRDetail = ({ navigation, route }) => {
     if (shipmentData && qr) {
       let data = shipmentData.packages.find(item => item.id === qr);
       let shipPack = shipmentData.shipment_items.find(
-        item => item.package === qr && item.assmin === false,
+        item => item.package === qr,
       );
       setData(data);
       shipmentApi
