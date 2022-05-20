@@ -5,7 +5,6 @@ import { Icon, Tab, TabView } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import QRCode from 'react-native-qrcode-svg';
 import * as Bonk from 'yup';
-import shipmentApi from '../../api/shipmentAPI';
 import storageApi from '../../api/storageApi';
 import PrimaryButton from '../../components/CustomButton/PrimaryButton';
 import Header from '../../components/Header';
@@ -20,7 +19,6 @@ const QRDetail = ({ navigation, route }) => {
   const { qr, type, shipmentData } = route?.params;
   const [data, setData] = useState([]);
   const [remainingPackage, setRemainingPackage] = useState(0);
-  const [shipmentItem, setShipmentItem] = useState(null);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(null);
   const [index, setIndex] = useState(0);
@@ -47,17 +45,12 @@ const QRDetail = ({ navigation, route }) => {
 
   const handleUpdate = values => {
     setLoading(<Loading />);
-    // let updateQuantity =
-    //   shipmentItem.quantity -
-    //   remainingPackage +
-    //   Number.parseInt(values.packages);
-    console.log(shipmentItem)
     if (type === 'import') {
       storageApi
         .updateImportQuantityByPackage({
           packageId: qr,
           quantity: values.packages,
-          shipmentItem: shipmentItem.id,
+          shipment: shipmentData.id,
         })
         .then(response => {
           setRemainingPackage(
@@ -81,7 +74,7 @@ const QRDetail = ({ navigation, route }) => {
         .updateExportQuantityByPackage({
           packageId: qr,
           quantity: values.packages,
-          // shipmentItem: shipmentItem.id,
+          shipment: shipmentData.id,
         })
         .then(response => {
           setRemainingPackage(
