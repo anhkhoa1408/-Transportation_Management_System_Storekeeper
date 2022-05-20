@@ -162,9 +162,11 @@ const VehicleDetail = ({ navigation, route }) => {
                         margin: 0,
                         marginRight: 5,
                         backgroundColor: '#FFF',
+                        shadowColor: COLORS.primary,
                         padding: 15,
                         elevation: 5,
                         borderRadius: 20,
+                        alignSelf: 'flex-start'
                       }}
                       name="archive"
                       type="font-awesome"
@@ -179,10 +181,10 @@ const VehicleDetail = ({ navigation, route }) => {
                       <Text style={{ ...FONTS.BigBold }}>
                         {item.name ? item.name : item.id}
                       </Text>
-                      <Text style={{ ...FONTS.Medium }}>
+                      {/* <Text style={{ ...FONTS.Medium }}>
                         Số lượng:{' '}
                         <Text style={{ ...style.info }}>{item.quantity}</Text>
-                      </Text>
+                      </Text> */}
                       {item.received >= 0 && (
                         <Text style={{ ...FONTS.Medium }}>
                           Trong xe:{' '}
@@ -200,12 +202,6 @@ const VehicleDetail = ({ navigation, route }) => {
                         <Text style={{ ...style.info }}>{item.position}</Text>
                       </Text> */}
                     </View>
-                    <CheckBox
-                      containerStyle={{ padding: 0 }}
-                      checkedIcon="dot-circle-o"
-                      uncheckedIcon="circle-o"
-                      checked={true}
-                    />
                   </View>
                 </View>
               </TouchableOpacity>
@@ -260,7 +256,7 @@ const style = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 15,
     marginVertical: 8,
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: COLORS.white,
     shadowColor: COLORS.primary,
     elevation: 10,

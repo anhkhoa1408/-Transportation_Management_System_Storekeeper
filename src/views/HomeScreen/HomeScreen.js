@@ -85,7 +85,10 @@ function HomeScreen({ navigation, userInfo, noties, ...props }) {
   const keyExtractor = (item, index) => index.toString();
 
   useEffect(() => {
-    homeAPI.getStorekeeperStatus().then(response => setStatus(response));
+    const unsubscribe = navigation.addListener("focus", () => {
+      homeAPI.getStorekeeperStatus().then(response => setStatus(response));
+    })
+    return unsubscribe
   }, []);
 
   return (
