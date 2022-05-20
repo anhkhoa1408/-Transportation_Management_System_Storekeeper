@@ -153,7 +153,11 @@ const VehicleDetail = ({ navigation, route }) => {
                 activeOpacity={0.9}
                 key={item.id}
                 onPress={() =>
-                  navigation.navigate('EditPackage', { item, type })
+                  navigation.navigate('EditPackage', {
+                    ...route.params,
+                    shipmentData: data,
+                    item,
+                  })
                 }>
                 <View key={item.id} style={style.package}>
                   <View style={{ ...style.vehicle }}>
