@@ -47,10 +47,11 @@ const QRDetail = ({ navigation, route }) => {
 
   const handleUpdate = values => {
     setLoading(<Loading />);
-    let updateQuantity =
-      shipmentItem.quantity -
-      remainingPackage +
-      Number.parseInt(values.packages);
+    // let updateQuantity =
+    //   shipmentItem.quantity -
+    //   remainingPackage +
+    //   Number.parseInt(values.packages);
+    console.log(shipmentItem)
     if (type === 'import') {
       storageApi
         .updateImportQuantityByPackage({
@@ -80,7 +81,7 @@ const QRDetail = ({ navigation, route }) => {
         .updateExportQuantityByPackage({
           packageId: qr,
           quantity: values.packages,
-          shipmentItem: shipmentItem.id,
+          // shipmentItem: shipmentItem.id,
         })
         .then(response => {
           setRemainingPackage(
