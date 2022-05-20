@@ -13,6 +13,7 @@ import storageApi from '../../api/storageApi';
 import packageApi from '../../api/packageApi';
 import ModalMess from './../../components/ModalMess';
 import Loading from './../../components/Loading';
+import PrimaryButton from '../../components/CustomButton/PrimaryButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const EditPackage = ({ navigation, route }) => {
@@ -77,7 +78,7 @@ const EditPackage = ({ navigation, route }) => {
       .then(response => {
         setItem({
           ...values,
-          ...response
+          ...response,
         });
         setLoading(null);
         setAlert({
@@ -112,21 +113,21 @@ const EditPackage = ({ navigation, route }) => {
         headerText={'Chi tiết kiện hàng'}
         rightElement={
           <Icon
-            name="check"
+            name="qr-code-scanner"
             size={30}
             color={COLORS.primary}
-            onPress={formik.submitForm}
+            onPress={() => {
+              navigation.navigate('QRDetail', {
+                ...route.params,
+                qr: item.id,
+              });
+            }}
           />
         }
       />
       <KeyboardAwareScrollView enableAutomaticScroll enableOnAndroid>
         <ScrollView contentContainerStyle={style.form}>
-          <TextField
-            editable={false}
-            title="Mã QR"
-            disabled
-            value={formik.values.id}
-          />
+          <TextField title="Mã QR" disabled value={formik.values.id} />
           <TextField
             editable={false}
             title="Tên kiện hàng"
@@ -213,6 +214,7 @@ const EditPackage = ({ navigation, route }) => {
             setSelected={setSelected}
             title="Loại"
           />
+          <PrimaryButton title="Lưu" onPress={formik.submitForm} />
         </ScrollView>
       </KeyboardAwareScrollView>
     </SafeAreaView>

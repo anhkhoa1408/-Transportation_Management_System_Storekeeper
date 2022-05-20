@@ -47,10 +47,11 @@ const QRDetail = ({ navigation, route }) => {
 
   const handleUpdate = values => {
     setLoading(<Loading />);
-    let updateQuantity =
-      shipmentItem.quantity -
-      remainingPackage +
-      Number.parseInt(values.packages);
+    // let updateQuantity =
+    //   shipmentItem.quantity -
+    //   remainingPackage +
+    //   Number.parseInt(values.packages);
+    console.log(shipmentItem)
     if (type === 'import') {
       storageApi
         .updateImportQuantityByPackage({
@@ -80,7 +81,7 @@ const QRDetail = ({ navigation, route }) => {
         .updateExportQuantityByPackage({
           packageId: qr,
           quantity: values.packages,
-          shipmentItem: shipmentItem.id,
+          // shipmentItem: shipmentItem.id,
         })
         .then(response => {
           setRemainingPackage(
@@ -109,21 +110,24 @@ const QRDetail = ({ navigation, route }) => {
         item => item.package === qr,
       );
       setData(data);
-      shipmentApi
-        .shipmentItemDetail(shipPack.id)
-        .then(response => {
-          setShipmentItem(response);
-          if (type === 'import')
-            setRemainingPackage(response.quantity - response.received);
-          else if (type === 'export')
-            setRemainingPackage(response.quantity - response.export_received);
-        })
-        .catch(err => {
-          setAlert({
-            type: 'danger',
-            message: 'Lấy thông tin kiện hàng thất bại',
-          });
-        });
+      const _received = data.received ? data.received : 0;
+      if (type === 'import') setRemainingPackage(_received);
+      else setRemainingPackage(data.quantity - _received);
+      // shipmentApi
+      //   .shipmentItemDetail(shipPack.id)
+      //   .then(response => {
+      //     setShipmentItem(response);
+      //     if (type === 'import')
+      //       setRemainingPackage(response.quantity - response.received);
+      //     else if (type === 'export')
+      //       setRemainingPackage(response.quantity - response.export_received);
+      //   })
+      //   .catch(err => {
+      //     setAlert({
+      //       type: 'danger',
+      //       message: 'Lấy thông tin kiện hàng thất bại',
+      //     });
+      //   });
     }
   }, []);
 
