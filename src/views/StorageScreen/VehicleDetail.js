@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -20,21 +20,38 @@ const VehicleDetail = ({ navigation, route }) => {
   const [checked, setChecked] = useState(false);
   const [data, setData] = useState({ packages: [] });
 
-  React.useEffect(() => {
-    shipmentApi
-      .shipmentDetail(shipmentId)
-      .then(data => {
-        data.shipment_items.map(
-          item =>
-            (data.packages.find(
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      shipmentApi
+        .shipmentDetail(shipmentId)
+        .then(data => {
+          data.shipment_items.forEach(item => {
+            let pkg = data.packages.find(
               _package => _package.id === item.package,
-            ).received = item.quantity),
-        );
-        data.packages.filter(item => item.received);
-        setData(data);
-      })
-      .catch(err => console.log(err));
-  }, []);
+            );
+            if (type === 'import' && !item.assmin)
+              pkg.received =
+                item.quantity - (item?.received ? item.received : 0);
+            if (type === 'export') {
+              if (item.assmin) {
+                pkg.received =
+                  (pkg.received ? pkg.received : 0) +
+                  item.export_received -
+                  item.quantity;
+              } else {
+                pkg.received =
+                  (pkg.received ? pkg.received : 0) - item.quantity;
+                pkg.throw = item.quantity;
+              }
+            }
+          });
+          data.packages.filter(item => item.received);
+          setData(data);
+        })
+        .catch(err => console.log(err));
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const finishShipment = () => {
     shipmentApi
@@ -166,10 +183,16 @@ const VehicleDetail = ({ navigation, route }) => {
                         Số lượng:{' '}
                         <Text style={{ ...style.info }}>{item.quantity}</Text>
                       </Text>
-                      {item.received && (
+                      {item.received >= 0 && (
                         <Text style={{ ...FONTS.Medium }}>
                           Trong xe:{' '}
                           <Text style={{ ...style.info }}>{item.received}</Text>
+                        </Text>
+                      )}
+                      {item.throw >= 0 && (
+                        <Text style={{ ...FONTS.Medium }}>
+                          Đã giao:{' '}
+                          <Text style={{ ...style.info }}>{item.throw}</Text>
                         </Text>
                       )}
                       {/* <Text style={{ ...FONTS.Medium }}>

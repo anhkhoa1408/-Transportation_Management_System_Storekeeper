@@ -132,7 +132,14 @@ const QRDetail = ({ navigation, route }) => {
       {alert && (
         <ModalMess
           alert={alert}
-          setAlert={setAlert}
+          setAlert={_alert => {
+            setAlert(_alert);
+            if (alert.type === 'success')
+              navigation.navigate({
+                name: 'VehicleDetail',
+                merge: true,
+              });
+          }}
           type={alert.type}
           message={alert.message}
         />
