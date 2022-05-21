@@ -22,6 +22,7 @@ const QRDetail = ({ navigation, route }) => {
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(null);
   const [index, setIndex] = useState(0);
+  const _text = type === 'import' ? 'nhập' : 'xuất';
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -34,7 +35,7 @@ const QRDetail = ({ navigation, route }) => {
         .min(1, 'Số lượng phải lớn hơn 0')
         .test(
           'package-test',
-          'Số lượng nhập vượt quá số kiện hàng cần nhập',
+          `Số lượng ${_text} vượt quá số kiện hàng cần ${_text}`,
           function checkExceedQuantity(quantity) {
             return quantity > remainingPackage ? false : true;
           },
@@ -99,9 +100,6 @@ const QRDetail = ({ navigation, route }) => {
   useEffect(() => {
     if (shipmentData && qr) {
       let data = shipmentData.packages.find(item => item.id === qr);
-      let shipPack = shipmentData.shipment_items.find(
-        item => item.package === qr,
-      );
       setData(data);
       const _received = data.received ? data.received : 0;
       if (type === 'import') setRemainingPackage(_received);

@@ -34,13 +34,9 @@ const VehicleDetail = ({ navigation, route }) => {
                 item.quantity - (item?.received ? item.received : 0);
             if (type === 'export') {
               if (item.assmin) {
-                pkg.received =
-                  (pkg.received ? pkg.received : 0) +
-                  item.export_received -
-                  item.quantity;
+                pkg.received = item.export_received;
+                if (item.quantity > 0) pkg.needToExport = item.quantity;
               } else {
-                pkg.received =
-                  (pkg.received ? pkg.received : 0) - item.quantity;
                 pkg.throw = item.quantity;
               }
             }
@@ -170,7 +166,7 @@ const VehicleDetail = ({ navigation, route }) => {
                         padding: 15,
                         elevation: 5,
                         borderRadius: 20,
-                        alignSelf: 'flex-start'
+                        alignSelf: 'flex-start',
                       }}
                       name="archive"
                       type="font-awesome"
@@ -189,10 +185,21 @@ const VehicleDetail = ({ navigation, route }) => {
                         Số lượng:{' '}
                         <Text style={{ ...style.info }}>{item.quantity}</Text>
                       </Text> */}
+                      {item.needToExport >= 0 && (
+                        <Text style={{ ...FONTS.Medium }}>
+                          Cần xuất:{' '}
+                          <Text style={{ ...style.info }}>
+                            {item.needToExport -
+                              (item.received ? item.received : 0)}
+                          </Text>
+                        </Text>
+                      )}
                       {item.received >= 0 && (
                         <Text style={{ ...FONTS.Medium }}>
                           Trong xe:{' '}
-                          <Text style={{ ...style.info }}>{item.received}</Text>
+                          <Text style={{ ...style.info }}>
+                            {item.received - (item.throw ? item.throw : 0)}
+                          </Text>
                         </Text>
                       )}
                       {item.throw >= 0 && (
