@@ -64,7 +64,7 @@ const VehicleDetail = ({ navigation, route }) => {
         }
         headerText={'Chi tiết chuyến xe'}
         rightElement={
-          <Icon
+          type === 'import' && <Icon
             name="check"
             size={30}
             color={COLORS.primary}
