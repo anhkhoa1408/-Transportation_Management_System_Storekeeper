@@ -23,8 +23,8 @@ const PackageInfo = ({ data, remainingPackage, type }) => {
         <View style={style.info}>
           <InfoField
             style={{ flex: 1 }}
-            title={`Số lượng cần ${type === 'import' ? 'nhập' : 'xuất'}`}
-            content={remainingPackage + ' kiện'}
+            title={`Số lượng kiện hàng`}
+            content={data.quantity + ' kiện'}
           />
           <InfoField
             style={{ flex: 1 }}
