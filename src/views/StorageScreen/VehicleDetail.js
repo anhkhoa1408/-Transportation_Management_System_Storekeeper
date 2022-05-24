@@ -29,9 +29,14 @@ const VehicleDetail = ({ navigation, route }) => {
             let pkg = data.packages.find(
               _package => _package.id === item.package,
             );
-            if (type === 'import' && !item.assmin)
-              pkg.received =
-                item.quantity - (item?.received ? item.received : 0);
+            if (type === 'import')
+              if (item.assmin) {
+                pkg.received =
+                  item.export_received - (item.received ? item.received : 0);
+              } else {
+                pkg.received =
+                  item.quantity - (item?.received ? item.received : 0);
+              }
             if (type === 'export') {
               if (item.assmin) {
                 pkg.received = item.export_received;
@@ -64,12 +69,14 @@ const VehicleDetail = ({ navigation, route }) => {
         }
         headerText={'Chi tiết chuyến xe'}
         rightElement={
-          type === 'import' && <Icon
-            name="check"
-            size={30}
-            color={COLORS.primary}
-            onPress={() => finishShipment()}
-          />
+          type === 'import' && (
+            <Icon
+              name="check"
+              size={30}
+              color={COLORS.primary}
+              onPress={() => finishShipment()}
+            />
+          )
         }
       />
       <View style={{ paddingHorizontal: 20 }}>
