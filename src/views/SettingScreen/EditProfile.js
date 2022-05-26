@@ -15,7 +15,7 @@ import PrimaryButton from '../../components/CustomButton/PrimaryButton';
 import Loading from '../../components/Loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { getAvatarFromUser } from '../../utils/avatarUltis';
+import { getAvatarFromUri, getAvatarFromUser } from '../../utils/avatarUltis';
 import { MAIN_URL } from '../../api/config';
 
 const EditProfile = ({ navigation }) => {
@@ -131,7 +131,7 @@ const EditProfile = ({ navigation }) => {
                           type: 'success',
                           message: 'Cập nhật ảnh đại diện thành công',
                         });
-                        setAvatar(MAIN_URL + response.avatar.url)
+                        setAvatar(getAvatarFromUri(response.avatar.url))
                       })
                       .catch(err => {
                         console.error(err);

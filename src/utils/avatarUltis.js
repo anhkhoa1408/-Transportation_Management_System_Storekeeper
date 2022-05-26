@@ -11,7 +11,7 @@ export function getAvatarFromUri(uri = undefined) {
   if (uri.search('/') === 0) {
     return MAIN_URL + uri;
   }
-  return uri;
+  return uri.concat("?.", Math.random().toString());
 }
 
 export function getNameFromUser(user) {
