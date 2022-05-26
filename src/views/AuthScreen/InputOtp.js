@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import * as Bonk from 'yup';
 import { useFormik } from 'formik';
 import { danger, success, warning } from '../../styles/color';
-import banner from './../../assets/images/otp_banner.png';
+import banner from './../../assets/images/otp_banner.jpg';
 
 import Loading from './../../components/Loading';
 import PrimaryButton from '../../components/CustomButton/PrimaryButton';
@@ -49,7 +49,7 @@ const InputOtp = ({ navigation, route }) => {
           }),
         )
         .catch(error => {
-          console.log(error)
+          console.log(error);
           setAlert(true);
         });
     } else {
